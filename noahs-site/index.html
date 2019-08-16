@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Noah's site!</title>    
+
+        <style>
+            body {
+                background-image: url("cow.png");
+                background-repeat: repeat;
+
+                font-family: "Comic Sans MS";
+                text-align: center;
+                white-space: nowrap;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1 id="h1_title" style="position: absolute; margin: 0px; left: 50%; top: 43%; transform: translateX(-50%) translateY(-50%); color: white; font-size: 70px;">NOAH'S FUNNY FUN SITE</h1>
+
+        <img src="grabb.png" id="img_grabb" style="position: absolute; right: 20px; bottom: 10px; height: 250px; cursor: pointer;">
+        <audio id="audio_buh" src="buh.ogg"></audio>
+
+        <!-- Background music -->
+        <audio id="audio_background" src="du gamla du fria.ogg" loop="true" autoplay></audio>
+
+        <script>
+            let h1_title = document.getElementById("h1_title");
+            setInterval(()=>{
+                h1_title.style.color = "hsl(" + (Math.random()*360).toString() + ", 100%, 50%)";
+            }, 1000);
+            
+            //-----------------------------------------------
+            
+            // ~~~~~~~~~~~~~~~~~~~~~~~~
+            //    buh.
+            // ~~~~~~~~~~~~~~~~~~~~~~~~
+
+            let img_grabb = document.getElementById("img_grabb")
+            img_grabb.onclick = () => {
+                document.getElementById("audio_buh").play();
+                img_grabb.src = "grabb som sager buh.png";
+                setTimeout(()=>{
+                    img_grabb.src = "grabb.png";
+                }, 400);
+            }
+        </script>
+    </body>
+</html>

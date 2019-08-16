@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Senast tillagda bilder från Göteborgs stadsmuseum</title>
+
+    <meta charset="utf-8" />
+
+    <!-- Material design lite -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-pink.min.css">
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+</head>
+
+<body style="text-align: center;">
+    <div id="wrapper" style="display: inline-block;">
+        <h1 style="margin-bottom: 100px;">Senast registrerade bilder<br>från Göteborgs stadsmuseum</h1>
+    </div>
+
+    <script>
+        function getLatestImageURL() {
+            let request = new XMLHttpRequest();
+            request.open("GET", "get-latest-image-url.php", false);
+            request.send();
+            return request.responseText;
+        }
+        function getHistoryData() {
+            let request = new XMLHttpRequest();
+            request.open("GET", "get-history-data.php", false);
+            request.send();
+
+            let textData = request.responseText;
+            let arrayData = [];
+            let currentString = "";
+            for (let a = 0; a < textData.length; a++) {
+                if (textData.charAt(a) == '\n') {
+                    arrayData.push(currentString);
+                    currentString = "";
+                }
+                else {
+                    currentString += textData.charAt(a);
+                }
+            }
+            return arrayData;
+        }
+        function addHistoryData(imageURL) {
+            let request = new XMLHttpRequest();
+            request.open("GET", "add-history-data.php?url=" + imageURL, false);
+            request.send();
+        }
+
+        let historyData = getHistoryData();
+        let newImageURL = getLatestImageURL();
+        if (historyData.length == 0 || historyData[historyData.length - 1].substr(0, 51) != newImageURL.substr(0, 51)) {
+            addHistoryData(newImageURL);
+            historyData.push(newImageURL);
+        }
+        let div_wrapper = document.getElementById("wrapper");
+        for (let a = historyData.length - 1; a >= 0; a--) {
+            let newImage = document.createElement("img");
+            newImage.src = historyData[a];
+            newImage.style.width = "800px";
+            div_wrapper.appendChild(newImage);
+        }
+    </script>
+</body>
+
+</html>

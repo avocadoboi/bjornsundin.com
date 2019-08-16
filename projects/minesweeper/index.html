@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Minesweeper</title>
+    <link rel="stylesheet" type="text/css" href="../../ui.css" />
+    <meta charset="utf-8">
+    <style>
+        #div_grid {
+            overflow: hidden;
+            box-shadow: 0vmin 0.1vmin 0.7vmin 0vmin black;
+            margin: auto;
+        }
+
+        .div_cell {
+            float: left;
+            text-align: center;
+            vertical-align: middle;
+            outline: 0.01vmin solid black;
+            background-color: #ccc;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        [type="number"] {
+            font-size: 3vmin;
+            width: 5vmin;
+            padding: 0.5vmin;
+            text-align: center;
+        }
+        [type="number"]::-webkit-inner-spin-button,
+        [type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+    </style>
+    <script>
+        Array.prototype.getLast = function () {
+            return this[this.length - 1];
+        }
+    </script>
+</head>
+
+<body>
+    <div class="div_centered">
+        <div id="div_grid"></div>
+        <div style="margin-top: 3vmin;">
+            <button id="button_restart" style="margin-right: 3vmin;">Restart</button>
+            Width: <input id="input_width" type="number" value="16" min="3" max="99"></input>
+            Height: <input id="input_height" type="number" value="16" min="3" max="99" style="margin-right: 3vmin;"></input>
+            Mines: <input id="input_minePercentage" type="number" value="15" min="1" max="70"></input>%
+        </div>
+    </div>
+    <script src="minesweeper.js"></script>
+</body>
+
+</html>

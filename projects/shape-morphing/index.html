@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Material design lite -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <!-- Stylesheet -->
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Tabs -->
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+        <div class="mdl-tabs__tab-bar">
+            <a class="mdl-tabs__tab is-active" href="#tab_shapeInput_0">First shape</a>
+            <a class="mdl-tabs__tab" href="#tab_shapeInput_1">Second shape</a>
+            <a class="mdl-tabs__tab" href="#tab_shapeMorphing">Morphing</a>
+        </div>
+
+        <div class="mdl-tabs__panel is-active" id="tab_shapeInput_0">
+            <canvas id="canvas_shapeInput_0"></canvas>
+        </div>
+        <div class="mdl-tabs__panel" id="tab_shapeInput_1">
+            <canvas id="canvas_shapeInput_1"></canvas>
+        </div>
+        <div class="mdl-tabs__panel" id="tab_shapeMorphing">
+            <canvas id="canvas_shapeMorphing"></canvas>
+        </div>
+    </div>
+
+    <!-- Vector class -->
+    <script src="../../Vector.min.js"></script>
+
+    <!-- Main script -->
+    <script defer src="script.js"></script>
+</body>
+
+</html>

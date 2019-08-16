@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Neural network learning to balance</title>
+</head>
+
+<body style="margin: 0px; overflow: hidden;">
+    <script src="../../Neuralt.js"></script>
+    <script>
+        const GRAVITATIONAL_ACCELERATION = 9.807 / 60 / 60;
+        const PIXELS_PER_METER = 170;
+
+        const PENDULUM_LENGTH = 1.5;
+        const PENDULUM_STEERING_SPEED = 0.08;
+        const PENDULUM_SPEED = 0.1;
+
+        const NUMBER_OF_HIDDEN_NEURONS = 15;
+        const LEARNING_RATE = 0.01;
+        const BATCH_SIZE = 35;
+        const EXPLORATION_FACTOR = 0.999;
+        const DISCOUNT_FACTOR = 0.97;
+        const TARGET_NETWORK_UPDATE_FREQUENCY = 60 * 10;
+        const EXPERIENCE_PRIORITIZATION = 0.8;
+
+        const GRAPH_SMOOTHNESS = 0.95;
+        const NUMBER_OF_GRAPH_POINTS = 900;
+
+        //------------------------------------------------------------------------------------------------------------
+
+        var canvas = document.createElement("canvas");
+        document.body.appendChild(canvas);
+
+        window.onresize = function () {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }; window.onresize();
+
+        var brush = canvas.getContext("2d");
+
+        //------------------------------------------------------------------------------------------------------------
+
+        class Vector {
+            constructor(a, b) {
+                if (b === undefined && a === undefined) {
+                    this.x = 0, this.y = 0;
+                }
+                else this.set(a, b);
+            }
+
+            set(a, b) {
+                if (b === undefined) {
+                    if (a.x === undefined) {
+                        this.x = a, this.y = a;
+                    }
+                    else {
+                        this.x = a.x, this.y = a.y;
+                    }
+                }
+                else {
+                    this.x = a, this.y = b;
+                }
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            add(a, b) {
+                if (b === undefined) {
+                    if (a.x === undefined) {
+                        this.x += a, this.y += a;
+                    }
+                    else {
+                        this.x += a.x, this.y += a.y;
+                    }
+                }
+                else {
+                    this.x += a, this.y += b;
+                }
+            }
+            getAdded(a, b) {
+                if (b === undefined) {
+                    if (a.x === undefined) {
+                        return new Vector(this.x + a, this.y + a);
+                    }
+                    else {
+                        return new Vector(this.x + a.x, this.y + a.y);
+                    }
+                }
+                else {
+                    return new Vector(this.x + a, this.y + b);
+                }
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            subtract(a, b) {
+                if (b == undefined) {
+                    if (a.x === undefined) {
+                        this.x -= a, this.y -= a;
+                    }
+                    else {
+                        this.x -= a.x, this.y -= a.y;
+                    }
+                }
+                else {
+                    this.x -= a, this.y -= b;
+                }
+            }
+            getSubtracted(a, b) {
+                if (b == undefined) {
+                    if (a.x === undefined) {
+                        return new Vector(this.x - a, this.y - a);
+                    }
+                    else {
+                        return new Vector(this.x - a.x, this.y - a.y);
+                    }
+                }
+                else {
+                    return new Vector(this.x - a, this.y - b);
+                }
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            divide(a, b) {
+                if (b === undefined) {
+                    if (a.x === undefined) {
+                        this.x /= a, this.y /= a;
+                    }
+                    else {
+                        this.x /= a.x, this.y /= a.y;
+                    }
+                }
+                else {
+                    this.x /= a, this.y /= b;
+                }
+            }
+            getDivided(a, b) {
+                if (b === undefined) {
+                    if (a.x === undefined) {
+                        return new Vector(this.x / a, this.y / a);
+                    }
+                    else {
+                        return new Vector(this.x / a.x, this.y / a.y);
+                    }
+                }
+                else {
+                    return new Vector(this.x / a, this.y / b);
+                }
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            multiply(a, b) {
+                if (b === undefined) {
+                    if (a.x === undefined) {
+                        this.x *= a, this.y *= a;
+                    }
+                    else {
+                        this.x *= a.x, this.y *= a.y;
+                    }
+                }
+                else {
+                    this.x *= a, this.y *= b;
+                }
+            }
+            getMultiplied(a, b) {
+                if (b === undefined) {
+                    if (a.x === undefined) {
+                        return new Vector(this.x * a, this.y * a);
+                    }
+                    else {
+                        return new Vector(this.x * a.x, this.y * a.y);
+                    }
+                }
+                else {
+                    return new Vector(this.x * a, this.y * b);
+                }
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            getLength() {
+                return Math.sqrt(this.x * this.x + this.y * this.y);
+            }
+            normalize() {
+                this.divide(this.getLength());
+            }
+            getNormalized() {
+                return this.getDivided(this.getLength());
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            getDotProduct(a, b) {
+                if (b === undefined) {
+                    return this.x * a.x + this.y * a.y;
+                }
+                else {
+                    return this.x * a + this.y * b;
+                }
+            }
+        };
+
+        //------------------------------------------------------------------------------------------------------------
+
+        var mousePosition = new Vector(canvas.width * 0.5, canvas.height * 0.5);
+        document.onmousemove = function (event) {
+            mousePosition.set(event.pageX, event.pageY);
+        }
+
+        //------------------------------------------------------------------------------------------------------------
+
+        var frameCount = 1;
+        var viewOffset = 0;
+
+        //------------------------------------------------------------------------------------------------------------
+
+        class Graph {
+            constructor(color, min, max) {
+                this.color = color;
+                this.min = min, this.max = max;
+                this.history = [];
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            addData(data) {
+                if (this.history.length > 0) {
+                    this.history.push(this.history[this.history.length - 1] * GRAPH_SMOOTHNESS + data * (1 - GRAPH_SMOOTHNESS));
+                }
+                else {
+                    this.history.push(data);
+                }
+            }
+            draw() {
+                brush.strokeStyle = this.color;
+                brush.lineWidth = 1;
+                brush.beginPath();
+                for (var a = 0; a < this.history.length; a += Math.round(Math.max(1, this.history.length / NUMBER_OF_GRAPH_POINTS))) {
+                    var position = {
+                        x: (a / (this.history.length - 1)) * canvas.width,
+                        y: (1 - (this.history[a] - this.min) / (this.max - this.min)) * canvas.height
+                    };
+                    if (a == 0) {
+                        brush.moveTo(position.x, position.y);
+                    }
+                    else {
+                        brush.lineTo(position.x, position.y);
+                    }
+                }
+                brush.stroke();
+            }
+        }
+
+        //------------------------------------------------------------------------------------------------------------
+
+        class Pendulum {
+            constructor() {
+                this.weightPosition = new Vector(canvas.width * 0.5 / PIXELS_PER_METER, PENDULUM_LENGTH);
+                this.weightVelocity = new Vector();
+                this.weightAcceleration = new Vector();
+
+                this.basePosition = new Vector(canvas.width * 0.5 / PIXELS_PER_METER, 0);
+                this.baseVelocity = new Vector();
+
+                this.neuralNetwork = new Neuralt.ReinforcementLearningNeuralNetwork(4, [NUMBER_OF_HIDDEN_NEURONS], 2);
+                this.neuralNetwork.learningRate = LEARNING_RATE;
+                this.neuralNetwork.maxLearningBatchSize = BATCH_SIZE;
+                this.neuralNetwork.explorationFactor = EXPLORATION_FACTOR;
+                this.neuralNetwork.minExploration = 0;
+                this.neuralNetwork.discountFactor = DISCOUNT_FACTOR;
+                this.neuralNetwork.targetNetworkUpdateFrequency = TARGET_NETWORK_UPDATE_FREQUENCY;
+                this.neuralNetwork.experiencePrioritization = EXPERIENCE_PRIORITIZATION;
+                this.neuralNetwork.outputNeuronActivation = Neuralt.Activations.Linear;
+
+                this.averageFeedbackGraph = new Graph("#f2a", -PENDULUM_LENGTH, PENDULUM_LENGTH);
+                this.QGraph_0 = new Graph("#db1", -10, 10);
+                this.QGraph_1 = new Graph("#7af", -10, 10);
+                this.direction = 0;
+                this.feedback = 0;
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            update() {
+                // Update base movement
+
+                var action = this.neuralNetwork.getNextAction(
+                    [
+                        this.weightPosition.x - this.basePosition.x,
+                        this.weightPosition.y - this.basePosition.y,
+                        this.weightVelocity.x,
+                        this.weightVelocity.y
+                    ]
+                );
+                if (action == 0) {
+                    this.direction = -1;
+                }
+                else if (action == 1) {
+                    this.direction = 1;
+                }
+                else {
+                    this.direction = 0;
+                }
+
+                this.baseVelocity.x += (this.direction * PENDULUM_SPEED - this.baseVelocity.x) * PENDULUM_STEERING_SPEED;
+                this.basePosition.x += this.baseVelocity.x;
+
+                if (this.basePosition.x * PIXELS_PER_METER < canvas.width * viewOffset) {
+                    viewOffset -= 1;
+                }
+                else if (this.basePosition.x * PIXELS_PER_METER > canvas.width * (viewOffset + 1)) {
+                    viewOffset += 1;
+                }
+
+                //------------------------------------------------------------------------------------------------------------
+                // Update acceleration
+
+                var delta = this.weightPosition.getAdded(0, GRAVITATIONAL_ACCELERATION).getSubtracted(this.basePosition);
+                var distance = delta.getLength();
+                var normal = delta.getDivided(distance);
+                this.weightAcceleration = normal.getMultiplied(PENDULUM_LENGTH - distance).getAdded(0, GRAVITATIONAL_ACCELERATION);
+
+                //------------------------------------------------------------------------------------------------------------
+                // Prevent "spring" oscillation, with 100% friction along delta (weight - base position)
+
+                this.weightVelocity.add(normal.getMultiplied(normal.getDotProduct(this.weightVelocity.getSubtracted(this.baseVelocity)) * -1));
+                this.weightVelocity.multiply(0.99);
+
+                //------------------------------------------------------------------------------------------------------------
+                // Update motion
+
+                this.weightVelocity.add(this.weightAcceleration);
+                this.weightPosition.add(this.weightVelocity);
+
+                //------------------------------------------------------------------------------------------------------------
+                // Give feedback to the neural network
+
+                this.neuralNetwork.giveFeedback(-this.weightPosition.y);
+                if (frameCount % 5 == 0) {
+                    this.averageFeedbackGraph.addData(-this.weightPosition.y);
+
+                    var experience = this.neuralNetwork.experience[this.neuralNetwork.experience.length - 1][this.neuralNetwork.experience[this.neuralNetwork.experience.length - 1].length - 1];
+                    this.QGraph_0.addData(this.neuralNetwork.getOutput(experience.state_0)[0]);
+                    this.QGraph_1.addData(this.neuralNetwork.getOutput(experience.state_0)[1]);
+                }
+            }
+            draw() {
+                // Graphs
+                this.QGraph_0.draw();
+                this.QGraph_1.draw();
+                this.averageFeedbackGraph.draw();
+
+                // Track
+                brush.strokeStyle = "#000";
+                brush.lineWidth = 1;
+                brush.beginPath();
+                brush.moveTo(0, canvas.height * 0.5);
+                brush.lineTo(canvas.width, canvas.height * 0.5);
+                brush.stroke();
+
+                // Pendulum body
+                brush.strokeStyle = "#000";
+                brush.lineWidth = 3;
+                brush.beginPath();
+                brush.moveTo(this.basePosition.x * PIXELS_PER_METER - viewOffset * canvas.width, this.basePosition.y * PIXELS_PER_METER + canvas.height * 0.5);
+                brush.lineTo(this.weightPosition.x * PIXELS_PER_METER - viewOffset * canvas.width, this.weightPosition.y * PIXELS_PER_METER + canvas.height * 0.5);
+                brush.stroke();
+
+                // Pendulum weight
+                brush.fillStyle = "#999";
+                brush.beginPath();
+                brush.arc(this.weightPosition.x * PIXELS_PER_METER - viewOffset * canvas.width, this.weightPosition.y * PIXELS_PER_METER + canvas.height * 0.5, 30, 0, Math.PI * 2);
+                brush.fill();
+
+                // Pendulum base
+                brush.fillRect(this.basePosition.x * PIXELS_PER_METER - 75 - viewOffset * canvas.width, this.basePosition.y * PIXELS_PER_METER - 25 + canvas.height * 0.5, 150, 50);
+            }
+        };
+
+        //------------------------------------------------------------------------------------------------------------
+
+        var pendulum = new Pendulum();
+
+        // document.onkeydown = function (event) {
+        //     if (event.keyCode == 37) {
+        //         pendulum.direction = -1;
+        //     }
+        //     else if (event.keyCode == 39) {
+        //         pendulum.direction = 1;
+        //     }
+        // }
+        // document.onkeyup = function (event) {
+        //     if (event.keyCode == 37 && pendulum.direction == -1) {
+        //         pendulum.direction = 0;
+        //     }
+        //     else if (event.keyCode == 39 && pendulum.direction == 1) {
+        //         pendulum.direction = 0;
+        //     }
+        // }
+
+        function update() {
+            pendulum.update();
+
+            //------------------------------------------------------------------------------------------------------------
+
+            brush.clearRect(0, 0, canvas.width, canvas.height);
+            pendulum.draw();
+
+            //------------------------------------------------------------------------------------------------------------
+
+            frameCount++;
+            requestAnimationFrame(update);
+        }; update();
+    </script>
+</body>
+
+</html>

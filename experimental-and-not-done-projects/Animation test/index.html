@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Ball!!</title>
+</head>
+
+<body>
+    <script src="../../p5.min.js"></script>
+
+    <script>
+        const CIRCLE_SIZE = 50;
+        const NUMBER_OF_ANIMATION_FRAMES = 30;
+
+        let position;
+        let startPosition;
+        let endPosition;
+        let animationTime = 0;
+
+        //==============================================================================
+
+        function getNextAnimatedValue(start, end, t) {
+            if (t >= 1) return end;
+            //let nextValue = start + (end - start) * (sin(t * PI - PI * 0.5) * 0.5 + 0.5);
+            let nextValue = start + (end - start) * (t < .5 ? 4*t*t*t : 1-4*(1-t)*(1-t)*(1-t));
+            return nextValue;
+        }
+
+        function mousePressed() {
+            endPosition.set(mouseX, mouseY);
+            startPosition = position.copy();
+            animationTime = 0;
+        }
+
+        //==============================================================================
+
+        function setup() {
+            createCanvas(800, 630);
+
+            position = createVector(width * 0.5, height * 0.5);
+            startPosition = createVector(width * 0.5, height * 0.5);
+            endPosition = createVector(width * 0.5, height * 0.5);
+        }
+
+        function draw() {
+            background(220);
+
+            animationTime += 1 / NUMBER_OF_ANIMATION_FRAMES;
+            position = createVector(
+                getNextAnimatedValue(startPosition.x, endPosition.x, animationTime),
+                getNextAnimatedValue(startPosition.y, endPosition.y, animationTime)
+            );
+            ellipse(position.x, position.y, CIRCLE_SIZE, CIRCLE_SIZE);
+        }
+    </script>
+</body>
+
+</html>

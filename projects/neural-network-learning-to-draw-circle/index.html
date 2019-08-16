@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Neural network learning to draw circle.</title>
+    <link rel="stylesheet" href="../../ui.css">
+    <style>
+        * {
+            font-size: 25px;
+        }
+
+        div {
+            position: absolute;
+            white-space: nowrap;
+            width: 480px;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        h1 {
+            position: absolute;
+            text-align: center;
+            white-space: nowrap;
+            font-size: 40px;
+            line-height: 40px;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-260px);
+        }
+
+        canvas {
+            border: 2px solid black;
+        }
+
+        #canvas_visualization {
+            display: inline-block;
+            image-rendering: pixelated;
+            width: 230px;
+        }
+
+        p {
+            font-family: Arial, Helvetica, sans-serif;
+            position: absolute;
+            font-size: 25px;
+            line-height: 100%;
+            top: 10px;
+            margin: 0px;
+        }
+
+        #text_info {
+            left: 0px;
+            top: 260px;
+        }
+        #button_restart {
+            position: absolute;
+            font-size: 25px;
+            padding: 5px 10px;
+            top: 245px;
+            right: 40px;
+        }
+
+        #text_neuronActivation {
+            top: 300px;
+        }
+        #select_activation {
+            display: inline-block;
+            position: absolute;
+            left: 210px;
+            top: 295px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Neural network learning to<br>draw a circle</h1>
+    <div id="div_panel">
+        <canvas id="canvas_graph" width="230" height="230"></canvas>
+        <canvas id="canvas_visualization" width="50" height="50"></canvas>
+        <p id="text_info"></p>
+        <p id="text_neuronActivation">Neuron activation: </p>
+        <select id="select_activation"></select>
+        <button id="button_restart">Restart</button>
+    </div>
+    
+    <script src="../../Neuralt.js"></script>
+    <script>
+        var neuralNetwork = new Neuralt.SupervisedLearningNeuralNetwork(2, [20], 1);
+        neuralNetwork.maxLearningBatchSize = 2000;
+        neuralNetwork.gradientDescentOptimization = Neuralt.GradientDescentOptimizations.Adam;
+        neuralNetwork.learningRate = 0.05;
+
+        function generateLearningExamples() {
+            neuralNetwork.learningExamples = [];
+            var point;
+            for (var a = 0; a < 2000; a++) {
+                point = { x: Math.random() - 0.5, y: Math.random() - 0.5 };
+                neuralNetwork.learningExamples.push(new Neuralt.LearningExample([point.x + 0.5, point.y + 0.5], [+(point.x * point.x + point.y * point.y < 0.05)]));
+                // neuralNetwork.learningExamples.push(new Neuralt.LearningExample([point.x + 0.5, point.y + 0.5], [(point.x > 0 && point.y < 0) || (point.x < 0 && point.y > 0)]));
+            }
+        } generateLearningExamples();
+
+        var text_info = document.getElementById("text_info");
+        var iteration = 0;
+
+        function restart() {
+            neuralNetwork.resetParameters();
+            iteration = 0;
+            generateLearningExamples();
+        }
+
+        var select_activation = document.getElementById("select_activation");
+        for (var key in Neuralt.Activations) {
+            var option = document.createElement("option");
+            option.text = key;
+            if (key == "LeakyReLU") {
+                option.selected = true;
+            }
+            select_activation.add(option);
+        }
+        select_activation.onchange = function () {
+            neuralNetwork.setActivation(Neuralt.Activations[select_activation.options[select_activation.selectedIndex].text]);
+        }
+
+        document.getElementById("button_restart").onclick = function () {
+            restart();
+        }
+
+        class Graph {
+            constructor() {
+                this.canvas = document.getElementById("canvas_graph");
+                this.brush = this.canvas.getContext("2d");
+                this.lossHistory = [];
+            }
+            update(loss) {
+                this.lossHistory.push(loss);
+                if (this.lossHistory.length > 400) {
+                    this.lossHistory.splice(0, 1);
+                }
+                this.brush.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.brush.beginPath();
+                this.brush.moveTo(-1, 0);
+                var maxLoss = Math.max.apply(null, this.lossHistory);
+                for (var a = 0; a < this.lossHistory.length; a++) {
+                    this.brush.lineTo(this.canvas.width / (this.lossHistory.length - 1) * a, this.canvas.height - this.lossHistory[a] / maxLoss * this.canvas.height);
+                }
+                this.brush.stroke();
+            }
+        }
+        var graph = new Graph();
+
+        class Visualization {
+            constructor() {
+                this.canvas = document.getElementById("canvas_visualization");
+                this.brush = this.canvas.getContext("2d");
+            }
+            update() {
+                this.brush.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                for (var y = 0; y < this.canvas.height; y++) {
+                    for (var x = 0; x < this.canvas.width; x++) {
+                        this.brush.fillStyle = "rgba(0, 0, 0," + (neuralNetwork.getOutput([x / (this.canvas.width - 1), y / (this.canvas.height - 1)])[0]) + ")";
+                        this.brush.fillRect(x, y, 1, 1);
+                    }
+                }
+            }
+        }
+        var visualization = new Visualization();
+
+        function learn() {
+            neuralNetwork.learn();
+
+            var loss = neuralNetwork.getLoss();
+            graph.update(loss);
+            visualization.update();
+            text_info.innerHTML =
+                "Loss: " + loss.toFixed(3) +
+                ". Iteration: " + iteration + ".";
+
+            iteration++;
+        } setInterval(learn, 1000 / 30);
+    </script>
+</body>
+
+</html>

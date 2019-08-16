@@ -1,0 +1,33 @@
+body {
+    margin: 0px;
+    text-align: center;
+}
+
+h4 {
+    color: #777;
+}
+
+p {
+    color: #555;
+    margin: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#wrapper {
+    display: inline-block;
+    margin-top: 50px;
+    text-align: left;
+    white-space: nowrap;
+    margin: 0px 50px;
+}
+
+#output {
+    display: inline-block;
+}
+
+#rightPanel {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 20px;
+}

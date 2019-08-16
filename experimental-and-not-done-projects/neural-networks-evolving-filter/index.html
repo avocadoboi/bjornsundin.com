@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Neural networks evolving filter</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.light_green-pink.min.css" /> 
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <!-- Custom style -->
+    <style>
+    </style>
+</head>
+
+<body style="white-space:nowrap; background-color: rgb(245, 245, 245);">
+    <div style="display:inline-block; position:absolute; left:50%; top:50%; transform:translateX(-50%) translateY(-50%)">
+        <!-- Display and status -->
+        <div style="display:inline-block;">
+            <h6>TARGET FREQUENCY RESPONSE</h6>
+            <canvas class="mdl-shadow--2dp" id="canvas_targetFrequencyResponse" width="550" height="250"
+                    style="margin-bottom: 10px;"></canvas>
+            <h6>BEST FREQUENCY RESPONSE</h6>
+            <canvas class="mdl-shadow--2dp" id="canvas_bestFrequencyResponse" width="550" height="250"></canvas>
+        </div>
+
+        <!-- Parameters and controls -->
+        <div style="display:inline-block;">
+            
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../Neuralt.min.js"></script>
+    <script src="../../Vector.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Aquarium</title>
+</head>
+
+<body style="margin: 0px; background-color: black; overflow: hidden;">
+    <canvas></canvas>
+
+    <script src="../../Neuralt.js"></script>
+    <script>
+        const NUMBER_OF_FISHES = 10;
+        const FISH_THICCNESS = 30;
+        const FISH_LENGTH = 80;
+        const FISH_SPEED = 3;
+        const FISH_ROTATIONAL_SPEED = 0.12;
+        const FISH_STEERING_SPEED = 0.2;
+
+        const FOOD_SIZE = 35;
+        const NUMBER_OF_FOODS = 4;
+        const FOOD_COLOR = "#f00";
+
+        const NUMBER_OF_SENSORS = 25;
+        const SENSOR_NARROWNESS = 1;
+        const NUMBER_OF_NEURONS_IN_HIDDEN_LAYER = 30;
+        const LEARNING_RATE = 0.03;
+        const DISCOUNT_FACTOR = 0.98;
+        const LEARNING_BATCH_SIZE = 40;
+        const EXPLORATION_FACTOR = 0.995;
+        const MIN_EXPLORATION = 0;
+        const EXPERIENCE_PRIORITIZATION = 0.8;
+        const TARGET_NETWORK_UPDATE_FREQUENCY = 60 * 10;
+
+        //--------------------------------------------------------------------------------------------------------------------------
+
+        var canvas = document.getElementsByTagName("canvas")[0];
+        onresize = function () {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+        }; onresize();
+
+        var brush = canvas.getContext("2d");
+
+        //--------------------------------------------------------------------------------------------------------------------------
+
+        var isLeftDown = false,
+            isRightDown = false,
+            isUpDown = false,
+            isDownDown = false;
+        onkeydown = function (e) {
+            switch (e.keyCode) {
+                case 37:
+                    isLeftDown = true;
+                    break;
+                case 39:
+                    isRightDown = true;
+                    break;
+                case 38:
+                    isUpDown = true;
+                    break;
+                case 40:
+                    isDownDown = true;
+            }
+        }
+        onkeyup = function (e) {
+            switch (e.keyCode) {
+                case 37:
+                    isLeftDown = false;
+                    break;
+                case 39:
+                    isRightDown = false;
+                    break;
+                case 38:
+                    isUpDown = false;
+                    break;
+                case 40:
+                    isDownDown = false;
+            }
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------
+
+        class Vector {
+            constructor(a, b) {
+                if (b == undefined && a == undefined) {
+                    this.x = 0, this.y = 0;
+                }
+                else this.set(a, b);
+            }
+
+            set(a, b) {
+                if (b == undefined) {
+                    if (a.x == undefined) {
+                        this.x = a, this.y = a;
+                    }
+                    else {
+                        this.x = a.x, this.y = a.y;
+                    }
+                }
+                else {
+                    this.x = a, this.y = b;
+                }
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            add(a, b) {
+                if (b == undefined) {
+                    if (a.x == undefined) {
+                        this.x += a, this.y += a;
+                    }
+                    else {
+                        this.x += a.x, this.y += a.y;
+                    }
+                }
+                else {
+                    this.x += a, this.y += b;
+                }
+            }
+            getAdded(a, b) {
+                if (b == undefined) {
+                    if (a.x == undefined) {
+                        return new Vector(this.x + a, this.y + a);
+                    }
+                    else {
+                        return new Vector(this.x + a.x, this.y + a.y);
+                    }
+                }
+                else {
+                    return new Vector(this.x + a, this.y + b);
+                }
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            subtract(a, b) {
+                if (b == undefined) {
+                    if (a.x == undefined) {
+                        this.x -= a, this.y -= a;
+                    }
+                    else {
+                        this.x -= a.x, this.y -= a.y;
+                    }
+                }
+                else {
+                    this.x -= a, this.y -= b;
+                }
+            }
+            getSubtracted(a, b) {
+                if (b == undefined) {
+                    if (a.x == undefined) {
+                        return new Vector(this.x - a, this.y - a);
+                    }
+                    else {
+                        return new Vector(this.x - a.x, this.y - a.y);
+                    }
+                }
+                else {
+                    return new Vector(this.x - a, this.y - b);
+                }
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            divide(a, b) {
+                if (b == undefined) {
+                    if (a.x == undefined) {
+                        this.x /= a, this.y /= a;
+                    }
+                    else {
+                        this.x /= a.x, this.y /= a.y;
+                    }
+                }
+                else {
+                    this.x /= a, this.y /= b;
+                }
+            }
+            getDivided(a, b) {
+                if (b == undefined) {
+                    if (a.x == undefined) {
+                        return new Vector(this.x / a, this.y / a);
+                    }
+                    else {
+                        return new Vector(this.x / a.x, this.y / a.y);
+                    }
+                }
+                else {
+                    return new Vector(this.x / a, this.y / b);
+                }
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            multiply(a, b) {
+                if (b == undefined) {
+                    if (a.x == undefined) {
+                        this.x *= a, this.y *= a;
+                    }
+                    else {
+                        this.x *= a.x, this.y *= a.y;
+                    }
+                }
+                else {
+                    this.x *= a, this.y *= b;
+                }
+            }
+            getMultiplied(a, b) {
+                if (b == undefined) {
+                    if (a.x == undefined) {
+                        return new Vector(this.x * a, this.y * a);
+                    }
+                    else {
+                        return new Vector(this.x * a.x, this.y * a.y);
+                    }
+                }
+                else {
+                    return new Vector(this.x * a, this.y * b);
+                }
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            getLength() {
+                return Math.sqrt(this.x * this.x + this.y * this.y);
+            }
+
+            normalize() {
+                this.divide(this.getLength());
+            }
+            getNormalized() {
+                return this.getDivided(this.getLength());
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            getNormal(isClockwise) {
+                if (isClockwise) {
+                    return new Vector(-this.y, this.x);
+                }
+                return new Vector(this.y, -this.x);
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            rotate(angle) {
+                var oldX = this.x, oldY = this.y;
+                this.x = oldX * Math.cos(angle) - oldY * Math.sin(angle);
+                this.y = oldX * Math.sin(angle) + oldY * Math.cos(angle);
+            }
+            getRotated(angle) {
+                return new Vector(
+                    this.x * Math.cos(angle) - this.y * Math.sin(angle),
+                    this.x * Math.sin(angle) + this.y * Math.cos(angle)
+                );
+            }
+
+            //------------------------------------------------------------------------------------------------------------
+
+            getDotProduct(a, b) {
+                if (b == undefined) {
+                    return this.x * a.x + this.y * a.y;
+                }
+                else {
+                    return this.x * a + this.y * b;
+                }
+            }
+            getCrossProduct(a, b) {
+                if (b == undefined) {
+                    return this.x * a.y + a.x * this.y;
+                }
+                else {
+                    return this.x * b + a * this.y;
+                }
+            }
+        };
+
+        //--------------------------------------------------------------------------------------------------------------------------
+
+        // (x2, y2) and (x3, y3) is the ray
+        function getRayLineIntersectionData(x0, y0, x1, y1, x2, y2, x3, y3) {
+            let rayScalar = ((x1 - x2) * (y1 - y0) - (y1 - y2) * (x1 - x0)) / ((x3 - x2) * (y1 - y0) - (y3 - y2) * (x1 - x0));
+            let lineScalar = ((x2 - x0) * (y3 - y2) - (y2 - y0) * (x3 - x2)) / ((x1 - x0) * (y3 - y2) - (y1 - y0) * (x3 - x2));
+            return {
+                intersectionPoint: {
+                    x: x2 + rayScalar * (x3 - x2),
+                    y: y2 + rayScalar * (y3 - y2)
+                },
+                distance: rayScalar,
+                isIntersecting: rayScalar > 0 && lineScalar >= 0 && lineScalar <= 1
+            };
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------
+
+        class Rectangle {
+            constructor(x, y, w, h) {
+                this.points = [
+                    new Vector(x - w * 0.5, y - h * 0.5),
+                    new Vector(x + w * 0.5, y - h * 0.5),
+                    new Vector(x + w * 0.5, y + h * 0.5),
+                    new Vector(x - w * 0.5, y + h * 0.5)
+                ];
+                this.w = w, this.h = h;
+            }
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------
+
+        class Food {
+            constructor() {
+                this.type = "Food";
+                this.points = [];
+                this.w = FOOD_SIZE, this.h = FOOD_SIZE;
+                this.respawn();
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------
+
+            respawn() {
+                let x = Math.random() * (canvas.width - FOOD_SIZE) + FOOD_SIZE * 0.5;
+                let y = Math.random() * (canvas.height - FOOD_SIZE) + FOOD_SIZE * 0.5;
+                this.points = [
+                    new Vector(x - FOOD_SIZE * 0.5, y - FOOD_SIZE * 0.5),
+                    new Vector(x + FOOD_SIZE * 0.5, y - FOOD_SIZE * 0.5),
+                    new Vector(x + FOOD_SIZE * 0.5, y + FOOD_SIZE * 0.5),
+                    new Vector(x - FOOD_SIZE * 0.5, y + FOOD_SIZE * 0.5)
+                ];
+            }
+
+            draw() {
+                brush.fillStyle = FOOD_COLOR;
+                brush.beginPath();
+                for (let a = 0; a < this.points.length; a++) {
+                    if (a == 0) {
+                        brush.moveTo(this.points[a].x, this.points[a].y);
+                    }
+                    else {
+                        brush.lineTo(this.points[a].x, this.points[a].y);
+                    }
+                }
+                brush.closePath();
+                brush.fill();
+            }
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------
+
+        class Fish {
+            constructor(aquarium, index) {
+                this.type = "Fish";
+                this.aquarium = aquarium;
+                this.index = index;
+                this.feedbackForThisUpdate;
+                if (index == 0) {
+                    this.color = "hsl(0, 0%, 70%)";
+                }
+                else {
+                    this.color = "hsl(" + Math.random() * 360 + ", 100%, 70%)";
+                }
+
+                //--------------------------------------------------------------------------------------------------------------------------
+
+                this.neuralNetwork = new Neuralt.ReinforcementLearningNeuralNetwork(NUMBER_OF_SENSORS, [NUMBER_OF_NEURONS_IN_HIDDEN_LAYER], 3);
+                this.neuralNetwork.learningRate = LEARNING_RATE;
+                this.neuralNetwork.discountFactor = DISCOUNT_FACTOR;
+                this.neuralNetwork.maxLearningBatchSize = LEARNING_BATCH_SIZE;
+                this.neuralNetwork.explorationFactor = EXPLORATION_FACTOR;
+                this.neuralNetwork.minExploration = MIN_EXPLORATION;
+                this.neuralNetwork.experiencePrioritization = EXPERIENCE_PRIORITIZATION;
+                this.neuralNetwork.targetNetworkUpdateFrequency = TARGET_NETWORK_UPDATE_FREQUENCY;
+
+                //--------------------------------------------------------------------------------------------------------------------------
+                // Geometry
+
+                this.position = new Vector(Math.random() * canvas.width, Math.random() * canvas.height);
+
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationalVelocity = 0;
+
+                this.velocity = new Vector();
+                this.angularVelocity = new Vector();
+
+                // if (this.index == 0) this.lastSensorPoints = [];
+                this.points = [null, null, null, null];
+                this.updatePoints();
+                this.w = FISH_LENGTH, this.h = FISH_THICCNESS;
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------
+
+            updatePoints() {
+                this.points[0] = new Vector(FISH_LENGTH * -0.5, FISH_THICCNESS * -0.5);
+                this.points[1] = new Vector(FISH_LENGTH * 0.5, FISH_THICCNESS * -0.5);
+                this.points[2] = new Vector(FISH_LENGTH * 0.5, FISH_THICCNESS * 0.5);
+                this.points[3] = new Vector(FISH_LENGTH * -0.5, FISH_THICCNESS * 0.5);
+                for (let a = 0; a < this.points.length; a++) {
+                    this.points[a].rotate(this.rotation);
+                    this.points[a].add(this.position);
+                }
+            }
+
+            updateCollision(rectangle) {
+                var projectionVectors = [
+                    this.points[1].getSubtracted(this.points[0]).getNormal(false).getDivided(this.w), this.points[2].getSubtracted(this.points[1]).getNormal(false).getDivided(this.h),
+                    this.points[3].getSubtracted(this.points[2]).getNormal(false).getDivided(this.w), this.points[0].getSubtracted(this.points[3]).getNormal(false).getDivided(this.h),
+                    rectangle.points[1].getSubtracted(rectangle.points[0]).getNormal(false).getDivided(rectangle.w), rectangle.points[2].getSubtracted(rectangle.points[1]).getNormal(false).getDivided(rectangle.h),
+                    rectangle.points[3].getSubtracted(rectangle.points[2]).getNormal(false).getDivided(rectangle.w), rectangle.points[0].getSubtracted(rectangle.points[3]).getNormal(false).getDivided(rectangle.h)
+                ];
+                var normal, penetration;
+                for (let a = 0; a < projectionVectors.length; a++) {
+                    let min_0, max_0;
+                    for (let b = 0; b < this.points.length; b++) {
+                        let dotProduct = projectionVectors[a].getDotProduct(this.points[b]);
+                        if (max_0 == undefined || dotProduct > max_0) {
+                            max_0 = dotProduct;
+                        }
+                        if (min_0 == undefined || dotProduct < min_0) {
+                            min_0 = dotProduct;
+                        }
+                    }
+
+                    let min_1, max_1;
+                    for (let b = 0; b < rectangle.points.length; b++) {
+                        let dotProduct = projectionVectors[a].getDotProduct(rectangle.points[b]);
+                        if (max_1 == undefined || dotProduct > max_1) {
+                            max_1 = dotProduct;
+                        }
+                        if (min_1 == undefined || dotProduct < min_1) {
+                            min_1 = dotProduct;
+                        }
+                    }
+
+                    if (min_0 > max_1 || min_1 > max_0) return;
+
+                    if (penetration == undefined || max_0 - min_1 < penetration) {
+                        penetration = max_0 - min_1;
+                        normal = projectionVectors[a];
+                    }
+                }
+
+                if (rectangle.type == "Food") {
+                    this.feedbackForThisUpdate = 1;
+                    rectangle.respawn();
+                }
+                else {
+                    this.position.add(normal.getMultiplied(-penetration * 0.7));
+                    this.velocity.set(0);
+                    if (this.feedbackForThisUpdate == 0) this.feedbackForThisUpdate = -1;
+
+                    if (rectangle.type == "Fish") {
+                        rectangle.position.add(normal.getMultiplied(penetration * 0.7));
+                        rectangle.velocity.set(0);
+                        if (rectangle.feedbackForThisUpdate == 0) rectangle.feedbackForThisUpdate = -1;
+                    }
+                }
+            }
+
+            update() {
+                this.feedbackForThisUpdate = 0;
+                if (this.index == 0) this.lastSensorPoints = [];
+
+                var inputValues = [];
+                for (let a = 0; a < NUMBER_OF_SENSORS; a++) {
+                    let x0 = this.position.x, y0 = this.position.y,
+                        x1 = x0 + Math.cos(a / NUMBER_OF_SENSORS * Math.PI * 2 + this.rotation),
+                        y1 = y0 + Math.sin(a / NUMBER_OF_SENSORS * Math.PI * 2 + this.rotation);
+
+                    let nearestDistance;
+                    let wasNearestDistanceGood;
+
+                    for (let b = 0; b < this.aquarium.fishes.length + 4 + NUMBER_OF_FOODS; b++) {
+                        if (b == this.index) continue;
+
+                        let points = b < this.aquarium.fishes.length ? this.aquarium.fishes[b].points : (b < this.aquarium.fishes.length + 4 ? this.aquarium.walls[b - this.aquarium.fishes.length].points : this.aquarium.foods[b - this.aquarium.fishes.length - 4].points);
+
+                        for (let c = 0; c < points.length; c++) {
+                            let nextPoint = points[c < points.length - 1 ? c + 1 : 0];
+                            let intersectionData = getRayLineIntersectionData(points[c].x, points[c].y, nextPoint.x, nextPoint.y, x0, y0, x1, y1);
+
+                            if (intersectionData.isIntersecting && (nearestDistance == undefined || intersectionData.distance < nearestDistance)) {
+                                nearestDistance = intersectionData.distance;
+
+                                if (b < this.aquarium.fishes.length + 4) {
+                                    wasNearestDistanceGood = false;
+                                }
+                                else {
+                                    wasNearestDistanceGood = true;
+                                }
+                            }
+                        }
+                    }
+
+                    // if (this.index == 0) this.lastSensorPoints.push(new Vector(x0 + (x1 - x0) * nearestDistance, y0 + (y1 - y0) * nearestDistance));
+                    inputValues.push((wasNearestDistanceGood ? 1 : -1) * 1 / (SENSOR_NARROWNESS * nearestDistance + 1));
+                }
+
+                let action;
+                if (this.index == 0) {
+                    action = isLeftDown ? 0 : (isRightDown ? 1 : 2);
+                }
+                else {
+                    action = this.neuralNetwork.getNextAction(inputValues);
+                }
+                this.rotationalVelocity += ((action == 0 ? -FISH_ROTATIONAL_SPEED : (action == 1 ? FISH_ROTATIONAL_SPEED : 0)) - this.rotationalVelocity) * FISH_STEERING_SPEED;
+                this.rotation += this.rotationalVelocity;
+
+                // this.velocity.x += ((Math.cos(this.rotation) * FISH_SPEED) - this.velocity.x) * FISH_STEERING_SPEED;
+                // this.velocity.y += ((Math.sin(this.rotation) * FISH_SPEED) - this.velocity.y) * FISH_STEERING_SPEED;
+                this.velocity.x = Math.cos(this.rotation) * FISH_SPEED;
+                this.velocity.y = Math.sin(this.rotation) * FISH_SPEED;
+                this.position.add(this.velocity);
+
+                this.updatePoints();
+            }
+
+            draw() {
+                this.updatePoints();
+
+                brush.fillStyle = this.color;
+                brush.beginPath();
+                for (let a = 0; a < this.points.length; a++) {
+                    if (a == 0) {
+                        brush.moveTo(this.points[a].x, this.points[a].y);
+                    }
+                    else {
+                        brush.lineTo(this.points[a].x, this.points[a].y);
+                    }
+                }
+                brush.closePath();
+                brush.fill();
+
+                // if (this.index == 0) {
+                //     brush.strokeStyle = "rgba(255, 255, 255, 0.2)";
+                //     for (let a = 0; a < this.lastSensorPoints.length; a++) {
+                //         brush.beginPath();
+                //         brush.moveTo(this.position.x, this.position.y);
+                //         brush.lineTo(this.lastSensorPoints[a].x, this.lastSensorPoints[a].y);
+                //         brush.closePath();
+                //         brush.stroke();
+                //     }
+                // }
+            }
+        };
+
+        //--------------------------------------------------------------------------------------------------------------------------
+
+        class Aquarium {
+            constructor() {
+                this.walls = [];
+                let aquarium = this;
+                addEventListener("resize", function () {
+                    aquarium.updateWalls();
+                });
+                this.updateWalls();
+
+                this.foods = [];
+                for (let a = 0; a < NUMBER_OF_FOODS; a++) {
+                    this.foods.push(new Food());
+                }
+
+                //--------------------------------------------------------------------------------------------------------------------------
+
+                this.fishes = [];
+                for (let a = 0; a < NUMBER_OF_FISHES; a++) {
+                    this.fishes.push(new Fish(this, a));
+                }
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------
+
+            updateWalls() {
+                this.walls = [
+                    new Rectangle(-50, canvas.height * 0.5, 100, canvas.height * 1.5),
+                    new Rectangle(canvas.width + 50, canvas.height * 0.5, 100, canvas.height * 1.5),
+                    new Rectangle(canvas.width * 0.5, -50, canvas.width * 1.5, 100),
+                    new Rectangle(canvas.width * 0.5, canvas.height + 50, canvas.width * 1.5, 100)
+                ];
+            }
+
+            update() {
+                for (let a = 0; a < this.fishes.length; a++) {
+                    this.fishes[a].neuralNetwork.giveFeedback(this.fishes[a].feedbackForThisUpdate);
+                    this.fishes[a].update();
+                }
+
+                for (let a = 0; a < this.fishes.length; a++) {
+                    for (let b = a + 1; b < this.fishes.length + 4 + NUMBER_OF_FOODS; b++) {
+                        if (b < this.fishes.length) {
+                            this.fishes[a].updateCollision(this.fishes[b]);
+                        }
+                        else if (b < this.fishes.length + 4) {
+                            this.fishes[a].updateCollision(this.walls[b - this.fishes.length]);
+                        }
+                        else {
+                            this.fishes[a].updateCollision(this.foods[b - this.fishes.length - 4]);
+                        }
+                    }
+                }
+            }
+
+            draw() {
+                for (let a = 0; a < this.fishes.length; a++) {
+                    this.fishes[a].draw();
+                }
+                for (let a = 0; a < this.foods.length; a++) {
+                    this.foods[a].draw();
+                }
+            }
+        };
+
+        //--------------------------------------------------------------------------------------------------------------------------
+
+        var aquarium = new Aquarium();
+
+        function update() {
+            aquarium.update();
+
+            //--------------------------------------------------------------------------------------------------------------------------
+
+            brush.clearRect(0, 0, canvas.width, canvas.height);
+            aquarium.draw();
+
+            //--------------------------------------------------------------------------------------------------------------------------
+
+            requestAnimationFrame(update);
+        }; update();
+    </script>
+</body>
+
+</html>

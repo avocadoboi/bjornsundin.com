@@ -1,0 +1,67 @@
+<html>
+
+<head>
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 2vw;
+            margin: 0;
+            border-collapse: collapse;
+        }
+
+        table {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 2px solid black;
+        }
+
+        th,
+        td {
+            border: 1px solid #444;
+            padding: 1vw 1vw;
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <th>Word 0</th>
+            <th>Word 1</th>
+        </tr>
+    </table>
+
+    <script>
+        var fileRequest = new XMLHttpRequest();
+        fileRequest.open("get", "neuralNetwork.json?cachePrevention=" + Math.random());
+        fileRequest.send();
+        fileRequest.addEventListener("load", showTable);
+
+        function getWordsFromInputValues(inputValues) {
+            var words = [""];
+            for (var a = 0; a < inputValues.length; a++) {
+                if (a == inputValues.length * 0.5) words.push("");
+                if (inputValues[a] != 0) {
+                    words[words.length - 1] += String.fromCharCode(inputValues[a] * 26 + 96);
+                }
+            }
+            return words;
+        }
+        function showTable() {
+            var data = JSON.parse(fileRequest.responseText).learningExamples;
+            var table = document.querySelector("table");
+            for (var i_row = 0; i_row < data.length; i_row++) {
+                var row = table.insertRow(-1);
+                row.style.backgroundColor = data[i_row].desiredOutputValues[0] == 1 ? "white" : "#ccc";
+                
+                var inputWords = getWordsFromInputValues(data[i_row].inputValues);
+                row.insertCell(-1).innerHTML = inputWords[0];
+                row.insertCell(-1).innerHTML = inputWords[1];
+            }
+        }
+    </script>
+</body>
+
+</html>

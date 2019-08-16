@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Björn Sundin | Info</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=0.7">
+
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-pink.min.css">
+</head>
+
+<body>
+    <script src="../menuBar.js"></script>
+    
+    <h2 style="margin-top: 50px; margin-bottom: 30px;">About me</h2>
+    <p style="display: inline-block; font-size: 23px; line-height: 30px; margin-top: 0px; width: 700px; color:rgb(50, 50, 50);">
+        I'm a <span id="span_age">?</span> year old avocado who likes to code. C++, Javascript and C# are the languages I use the most. 
+        I started working on projects in february 2016 by making games with my friends. At the moment I am working on a couple of C++ projects.
+        <br><br>
+        Take a look at <a style="display: inline-block;" href="../projects/index.html">PROJECTS</a>
+        if you want to see my javascript stuff, I add new projects there sometimes.
+    </p>
+    <br>
+    <a style="display: inline-block; margin-top: 50px; margin-bottom: 50px;" href="../burial-places.html"><img style="width: 60px; image-rendering: pixelated;" src="smile.png" /></a>
+    <br>
+    <a style="display: inline-block; font-size: 27px; line-height: 50px;" href="https://github.com/avocadoboi/">Github</a>
+    <br>
+    <a style="display: inline-block; font-size: 27px; line-height: 40px;" href="https://twitter.com/ormenbjorn">Twitter</a>
+    <br>
+    <p style="margin-top: 15px; font-size: 23px">bjornsundin02@gmail.com</p>
+
+    <script>
+        let currentDate = new Date();
+        document.getElementById("span_age").innerHTML = (currentDate.getFullYear() - 2002 - (currentDate.getDate() < 13 || currentDate.getMonth() < 11)).toString()
+    </script>
+
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-85417464-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+</body>
+
+</html>

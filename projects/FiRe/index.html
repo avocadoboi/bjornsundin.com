@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fire!</title>
+</head>
+
+<body style="margin: 0px; overflow: hidden;">
+    <script src="../../p5.min.js"></script>
+    <script>
+        const HUE_RANGE = 60;
+        const FIRE_WIDTH = 1000;
+        const FADE_RATE = 1 / 500;
+        const DETAIL = 1 / 5; // (0, 1]
+        const GAS_DENSITY = 0.7;
+
+        //===========================================================================================================================================
+
+        class FirePoint {
+            constructor(x, angle) {
+                this.position = createVector(x, height);
+                this.velocity = p5.Vector.fromAngle(angle);
+            }
+
+            //===========================================================================================================================================
+
+            update() {
+                this.position.add(this.velocity);
+                this.velocity.add(noise(this.noisePosition) - 0.5, -1 / GAS_DENSITY + 1);
+            }
+        };
+
+        class FireLine {
+            constructor() {
+                this.startingPositionX = width * 0.5 + random(-0.5, 0.5) * FIRE_WIDTH;
+                this.startingAngle = random(PI, TAU);
+                this.points = [new FirePoint(this.startingPositionX, this.startingAngle)];
+                this.noisePosition = random(100);
+
+                this.fadeRate = FADE_RATE + random(-0.0013, 0.0013);
+
+                this.shouldStopSending = false;
+                this.shouldBeRemoved = false;
+            }
+
+            //===========================================================================================================================================
+
+            draw() {
+                for (let a = 0; a < this.points.length; a++) {
+                    this.points[a].update();
+                    this.points[a].velocity.x += (noise(this.noisePosition) - 0.5) * 0.8;
+                    this.noisePosition += 0.005;
+                    this.brightness = random(150, 255);
+                }
+
+                for (let a = 0; a < this.points.length - 1; a++) {
+                    let distance = height - this.points[a + 1].position.y;
+
+                    if (distance * this.fadeRate >= 1) {
+                        this.points.splice(a + 1, this.points.length - a + 1);
+                        this.shouldStopSending = true;
+
+                        if (this.points.length == 1) {
+                            this.shouldBeRemoved = true;
+                            return;
+                        }
+                        break;
+                    }
+                    else {
+                        stroke(255, 255, 255, 255 - distance * this.fadeRate * 105 - 100);
+                        strokeWeight(3 - 3*distance*this.fadeRate);
+                        line(this.points[a].position.x, this.points[a].position.y, this.points[a + 1].position.x, this.points[a + 1].position.y);
+                    }
+                }
+
+                if (!this.shouldStopSending && frameCount % round(1 / DETAIL) == 0) {
+                    this.points.splice(0, 0, new FirePoint(this.startingPositionX, this.startingAngle));
+                }
+            }
+        }; var fire = [];
+
+        //===========================================================================================================================================
+
+        function setup() {
+            createCanvas(innerWidth, innerHeight);
+        }
+
+        function draw() {
+            background(0, 0, 10, 100);
+
+            fire.push(new FireLine());
+            fire.push(new FireLine());
+            fire.push(new FireLine());
+            fire.push(new FireLine());
+            for (var a = fire.length - 1; a >= 0; a--) {
+                fire[a].draw();
+                if (fire[a].shouldBeRemoved) {
+                    fire.splice(a, 1);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Neural network test!</title>
+    <style>
+        p {
+            font-size: 30px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        div {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        canvas {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <canvas id="canvas" width="700" height="350"></canvas>
+        <p id="text"></p>
+    </div>
+    <script src="../../Neuralt.js"></script>
+    <script>
+        var canvas = document.getElementById("canvas");
+        var brush = canvas.getContext("2d");
+
+        var neuralNetwork = new Neuralt.SupervisedLearningNeuralNetwork(2, [6], 1);
+        neuralNetwork.learningExamples = [
+            new Neuralt.LearningExample([0, 0], [0]),
+            new Neuralt.LearningExample([1, 1], [0]),
+            new Neuralt.LearningExample([0, 1], [1]),
+            new Neuralt.LearningExample([1, 0], [1])
+        ];
+        neuralNetwork.gradientDescentOptimization = Neuralt.GradientDescentOptimizations.Adam;
+        neuralNetwork.learningRate = 0.05;
+        neuralNetwork.setActivation(Neuralt.Activations.Sigmoid);
+
+        var text = document.getElementById("text");
+        var costHistory = [];
+
+        var iteration = 0;
+        function learn() {
+            neuralNetwork.learn();
+
+            var loss = neuralNetwork.getLoss();
+            costHistory.push(loss);
+            // if (costHistory.length > 200) {
+            //     costHistory.splice(0, 1);
+            // }
+
+            text.innerHTML =
+                "Loss: " + loss.toFixed(3) +
+                ".<br>Iteration: " + iteration + ".";
+
+            brush.clearRect(0, 0, canvas.width, canvas.height);
+            brush.beginPath();
+            brush.moveTo(-1, 0);
+            var maxCost = Math.max.apply(null, costHistory);
+            for (var a = 0; a < costHistory.length; a++) {
+                brush.lineTo(canvas.width / (costHistory.length - 1) * a, canvas.height - costHistory[a] / maxCost * canvas.height);
+            }
+            brush.stroke();
+
+            iteration++;
+        } setInterval(learn, 1000/30);
+    </script>
+</body>
+
+</html>

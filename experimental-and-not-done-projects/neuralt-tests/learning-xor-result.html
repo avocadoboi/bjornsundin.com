@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Neural network test!</title>
+    <style>
+        p {
+            font-size: 30px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        div {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        canvas {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <p id="text"></p>
+    </div>
+    <script src="../../Neuralt.js"></script>
+    <script>
+        var text = document.getElementById("text");
+        var neuralNetwork = new Neuralt.NeuralNetwork(2, [3], 1);
+        neuralNetwork.trainingExamples = [
+            new Neuralt.TrainingExample([0, 1], [1]),
+            new Neuralt.TrainingExample([1, 0], [1]),
+            new Neuralt.TrainingExample([0, 0], [0]),
+            new Neuralt.TrainingExample([1, 1], [0]),
+        ];
+
+        var isDone = false;
+        var numberOfIterations = 0;
+        while (!isDone) {
+            neuralNetwork.train();
+
+            for (var a = 0; a < neuralNetwork.trainingExamples.length; a++) {
+                if ((neuralNetwork.getOutput(neuralNetwork.trainingExamples[a].inputValues)[0] >= 0.5) != neuralNetwork.trainingExamples[a].desiredOutputValues[0]) {
+                    break;
+                }
+                if (a == neuralNetwork.trainingExamples.length - 1) {
+                    isDone = true;
+                }
+            }
+            numberOfIterations++;
+        }
+        text.innerHTML = 
+        "0, 1: " + (neuralNetwork.getOutput([0, 1])[0] >= 0.5) +
+        ".<br>1, 0: " + (neuralNetwork.getOutput([1, 0])[0] >= 0.5) +
+        ".<br>0, 0: " + (neuralNetwork.getOutput([0, 0])[0] >= 0.5) +
+        ".<br>1, 1: " + (neuralNetwork.getOutput([1, 1])[0] >= 0.5) +
+        ".<br>Number of iterations: " + numberOfIterations;
+    </script>
+</body>
+
+</html>

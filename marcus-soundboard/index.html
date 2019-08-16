@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        a {
+            display: inline-block;
+            text-decoration-line: underline;
+            cursor: pointer;
+            margin-top: 0px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+
+<body style="background-color:rgb(172, 169, 161); font-family:'Comic Sans MS'">
+    <div style="position: absolute; left:50%; top:50%; transform:translateX(-50%) translateY(-50%); background-color:rgb(207, 204, 194); width: 700px; height: 600px;
+                background-image:url(background.jpg); background-size: cover; background-origin:50% 50%; box-shadow:0px 2px 8px 1px rgba(0, 0, 0, 0.4); background-blend-mode:overlay;">
+        <h1 style="display: inline-block; position:absolute; left:50%; top: 25px; transform:translateX(-50%); font-size:50px; margin:0px;">Marcus</h1>
+
+        <h2 style="display: inline-block; position:absolute; left:25%; top: 95px; transform:translateX(-50%); font-size:30px; color:#444;">SHORT</h2>
+        <div style="display: inline-block; position:absolute; left:5%; top:170px; color:#111; text-decoration: #111; width:25%; text-align:center;">
+            <a onclick="playSound('short/hello.ogg')">hello</a>
+            <br>
+            <a onclick="playSound('short/cia.ogg')">cia</a>
+            <br>
+            <a onclick="playSound('short/nye.ogg')">nye</a>
+            <br>
+            <a onclick="playSound('short/YA.ogg')">YA</a>
+        </div>
+        <div style="display: inline-block; position:absolute; left:20%; top:170px; color:#111; text-decoration: #111; width:25%; text-align:center;">
+            <a onclick="playSound('short/yeah.ogg')">yeah</a>
+            <br>
+            <a onclick="playSound('short/yeah....ogg')">yeah...</a>
+            <br>
+            <a onclick="playSound('short/blUEh.ogg')">blUEh</a>
+        </div>
+
+        <h2 style="display: inline-block; position:absolute; left:75%; top: 95px; transform:translateX(-50%); font-size:30px; color:#444;">WISDOM</h2>
+        <div style="display: inline-block; position:absolute; left:50%; top:170px; color:#111; text-decoration: #111; width:50%; text-align:center;">
+            <a onclick="playSound('wisdom/be nice to your mother.ogg')">be nice to your mother</a>
+            <br>
+            <a onclick="playSound('wisdom/dont hurt yourself.ogg')">don't hurt yourself</a>
+            <br>
+            <a onclick="playSound('wisdom/marcus here.ogg')">marcus here</a>
+            <br>
+            <a onclick="playSound('wisdom/big mouse.ogg')">big mouse</a>
+            <br>
+            <a onclick="playSound('wisdom/I think thats it.ogg')">I think thats it</a>
+        </div>
+
+        <h2 style="display: inline-block; position:absolute; left:50%; top: 330px; transform:translateX(-50%); font-size:30px; color:#444;">WOAH</h2>
+        <div style="display: inline-block; position:absolute; left:0; top:400px; color:#111; text-decoration: #111; width:100%; text-align:center;">
+            <a onclick="playSound('woah/amazing.ogg')">amazing</a>
+            <br>
+            <a onclick="playSound('woah/its never ending.ogg')">it's never ending</a>
+            <br>
+            <a onclick="playSound('woah/new helium balloon.ogg')">new helium balloon</a>
+            <br>
+            <a onclick="playSound('woah/its a bit cool.ogg')">its a bit cool</a>
+            <br>
+            <a onclick="playSound('woah/what.ogg')">whAT?</a>
+        </div>
+    </div>
+
+    <script>
+        function playSound(p_name) {
+            new Audio(p_name).play();
+        }
+    </script>
+</body>
+
+</html>

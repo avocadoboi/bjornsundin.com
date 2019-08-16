@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cubic bezier easing</title>
+    
+    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
+</head>
+
+<body style="text-align: center; user-select: none;">
+    <div style="display: inline-block; position:absolute; left:50%; top:50%; transform:translateX(-50%) translateY(-50%); text-align:left;">
+        <p id="cubicBezierText" style="display: inline-block; font-family: 'Roboto', sans-serif; font-size:25px; margin-left:15px; margin-bottom:10px;">cubic-bezier(0, 0, 1, 1)</p>
+        <br>
+        <canvas id="canvas" style="touch-action:none;" width="400" height="400"></canvas>
+        <br>
+        <canvas id="animationCanvas" width="400" height="50"></canvas>
+    </div>
+
+    <script src="../../Vector.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+body{
+    margin: 0;
+    background-color: black;
+}
+h1, p{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 600%;
+    text-align: center;
+    color: white;
+}
+#canvas{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    outline-color: white;
+    outline-width: 5;
+    outline-style: solid;
+    image-rendering: pixelated;
+}
+p{
+    position: absolute;
+    top: 380px;
+}
+#score{
+    font-size: 300%;
+    top: 40px;
+}
+#highScore{
+    font-size: 300%;
+    top: 80px;
+}

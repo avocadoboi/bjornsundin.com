@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Alphabetical ordering game</title>
+
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-pink.min.css">
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <style>
+        div {
+            display: inline-block;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            text-align: center;
+        }
+
+        #text {
+            font-size: 300px;
+            line-height: 300px;
+            white-space: nowrap;
+        }
+
+        button {
+            min-height: 100px;
+        }
+
+        #button_true {
+            display: inline-block;
+            margin-right: 10px;
+
+            padding: 0px 30px;
+            font-size: 60px;
+        }
+
+        #button_false {
+            display: inline-block;
+            margin-left: 10px;
+
+            padding: 0px 30px;
+            font-size: 60px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <p id="text"></p>
+        <br>
+        <button id="button_true" class="mdl-button mdl-js-button mdl-js-ripple-effect">true</button>
+        <button id="button_false" class="mdl-button mdl-js-button mdl-js-ripple-effect">false</button>
+    </div>
+
+    <script>
+        var text = document.getElementById("text");
+
+        //===========================================================================================================================
+
+        var lettersToUse = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var letterWeights = [];
+        var accumulatedLetterWeights = [];
+        var letterWeightSum = 0;
+        for (let a = 0; a < lettersToUse.length; a++) {
+            letterWeights.push(1);
+            accumulatedLetterWeights.push(letterWeightSum);
+            letterWeightSum++;
+        }
+
+        function updateAccumulatedLetterWeights() {
+            let minLetterWeight = Math.min(...letterWeights); 
+            letterWeightSum = 0;
+            for (let a = 0; a < letterWeights.length; a++) {
+                accumulatedLetterWeights[a] = letterWeightSum;
+                letterWeights[a] -= minLetterWeight - .1;
+                letterWeightSum += letterWeights[a];
+            }
+        }
+
+        //===========================================================================================================================
+
+        var letter_0, comparisonOperator, letter_1;
+
+        function getNextLetter() {
+            let randomNumber = Math.random() * letterWeightSum;
+            for (let a = 0; a < letterWeights.length; a++) {
+                if (randomNumber >= accumulatedLetterWeights[a] && randomNumber < accumulatedLetterWeights[a] + letterWeights[a]) {
+                    return lettersToUse.charAt(a);
+                }
+            }
+        }
+        function regenerate() {
+            letter_0 = getNextLetter();
+            do {
+                letter_1 = getNextLetter();
+            } while (letter_1 == letter_0);
+            comparisonOperator = (Math.random() > 0.5 ? '<' : '>');
+
+            text.innerText = letter_0 + ' ' + comparisonOperator + ' ' + letter_1;
+        }; regenerate();
+
+        //===========================================================================================================================
+
+        function checkGuess(guess) {
+            if ((comparisonOperator == '<' ? (letter_0 < letter_1) : (letter_0 > letter_1)) == guess) {
+                letterWeights[letter_0.charCodeAt(0) - 65] -= 0.3;
+                letterWeights[letter_1.charCodeAt(0) - 65] -= 0.3;
+                
+                text.innerText = "✓";
+                text.style.color = "#0f4";
+            }
+            else {
+                letterWeights[letter_0.charCodeAt(0) - 65] += 2;
+                letterWeights[letter_1.charCodeAt(0) - 65] += 2;
+                
+                text.innerText = "X";
+                text.style.color = "red";
+            }
+            updateAccumulatedLetterWeights();
+            button_true.childNodes[0].textContent = "next";
+            button_false.hidden = true;
+        }
+
+        var button_true = document.getElementById("button_true");
+        button_true.onclick = function () {
+            if (button_true.childNodes[0].textContent == "true") {
+                checkGuess(true);
+            }
+            else {
+                regenerate();
+                text.style.color = "black";
+                button_true.childNodes[0].textContent = "true";
+                button_false.hidden = false;
+            }
+        }
+
+        var button_false = document.getElementById("button_false");
+        button_false.onclick = function () {
+            checkGuess(false);
+        }
+    </script>
+</body>
+
+</html>

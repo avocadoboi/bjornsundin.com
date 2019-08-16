@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Clock</title>
+
+    <style>
+        body {
+            overflow: hidden;
+        }
+
+        #canvas {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        let canvas = document.getElementById("canvas");
+        let clockWidth;
+        function handleResize() {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+            clockWidth = Math.min(innerWidth, innerHeight);
+        }
+        handleResize();
+        addEventListener("resize", handleResize);
+
+        let brush = canvas.getContext("2d");
+
+        let date = new Date();
+        let secondAngle;
+        let minuteAngle;
+        let hourAngle;
+
+        let counter = 0;
+        function update() {
+            if (counter == 60 || counter == 0) {
+                date.setTime(Date.now());
+                let time = (date.getSeconds() + date.getMilliseconds()/1000)/60;
+                secondAngle = 2*Math.PI*time - Math.PI*0.5;
+                time = (time + date.getMinutes())/60;
+                minuteAngle = 2*Math.PI*time - Math.PI*0.5;
+                time = (time + date.getHours())/24;
+                hourAngle = 4*Math.PI*time - Math.PI*0.5;
+                counter = 0;
+            }
+            else
+            {
+                secondAngle += 2*Math.PI/(60*60);
+                minuteAngle += 2*Math.PI/(60*60*60);
+                hourAngle += 2*Math.PI/(60*60*60*12);
+            }
+
+            brush.fillStyle = "hsl(" + hourAngle*360/(2*Math.PI) + ", 100%, 70%)";
+            brush.fillRect(0, 0, canvas.width, canvas.height);
+            
+            brush.lineCap = "round";
+            brush.strokeStyle = "rgb(10, 10, 10)";
+            brush.lineWidth = 10;
+            brush.beginPath();
+            brush.moveTo(canvas.width*0.5, canvas.height*0.5);
+            brush.lineTo(canvas.width*0.5 + Math.cos(secondAngle)*clockWidth*0.4, canvas.height*0.5 + Math.sin(secondAngle)*clockWidth*0.4);
+            brush.stroke();
+            
+            brush.beginPath();
+            brush.moveTo(canvas.width*0.5, canvas.height*0.5);
+            brush.lineTo(canvas.width*0.5 + Math.cos(minuteAngle)*clockWidth*0.3, canvas.height*0.5 + Math.sin(minuteAngle)*clockWidth*0.3);
+            brush.stroke();
+
+            brush.beginPath();
+            brush.moveTo(canvas.width*0.5, canvas.height*0.5);
+            brush.lineTo(canvas.width*0.5 + Math.cos(hourAngle)*clockWidth*0.2, canvas.height*0.5 + Math.sin(hourAngle)*clockWidth*0.2);
+            brush.stroke();
+            
+            brush.fillStyle = "rgb(10, 10, 10)";
+            brush.beginPath();
+            brush.arc(canvas.width*0.5, canvas.height*0.5, 10, 0, Math.PI*2);
+            brush.fill();
+
+            for (let a = 0; a < 60; a++) {
+                brush.lineWidth = a % 5 == 0 ? 5 : 2;
+                let x = Math.cos(2*Math.PI*a/60);
+                let y = Math.sin(2*Math.PI*a/60);
+                brush.beginPath();
+                brush.moveTo(canvas.width*0.5 + x*clockWidth*0.44, canvas.height*0.5 + y*clockWidth*0.44);
+                brush.lineTo(canvas.width*0.5 + x*clockWidth*0.48, canvas.height*0.5 + y*clockWidth*0.48);
+                brush.stroke();
+            }
+
+            counter++;
+            requestAnimationFrame(update);
+        }
+        update();
+
+    </script>
+</body>
+
+</html>

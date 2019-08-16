@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="css/Home.css"/>
+        <title>Pomland</title>
+        <link rel="shortcut icon" href="icon.ico" />
+        <meta name="keywords" content="pomland, rpg, games, pixel art, chiptune, pomeranians, funny, sfml, c++, adventure">
+    </head>
+    
+    <body>
+        <div id="mainDiv">      
+            <img id="Photo0" src="images/title.png"/>
+            <img class="Photo1" src="images/intro_0.png"/>
+            
+            <p>So, what's Pomland?<br> 
+            Is it some kind of ice cream?<br>
+            Well, Pomland is an RPG about a child<br>
+            who escapes war, ending up on the <br>
+            big island that is called Pomland.<br>
+            The child then starts to explore <br>
+            the island and finds interesting <br>
+            stuff.<br></p>
+            
+            <img class="Photo1" src="images/intro_1.png"/>
+            
+            <p>The game is inspired by games such<br>
+            as Banjo-Kazooie, The Mario Series,<br>
+            Undertale, Donkey Kong Country,<br>
+            Crash Bandicoot and Earthbound.<br></p>
+            
+            <center>
+                <p><br><i>The demo is coming...</i><br><br></p>
+            </center>
+            
+            <div id="spritesDiv">
+                <img id="sprite0" onclick="flynnClick()" src="images/flynn_0.png"/>
+                <img id="sprite1" onclick="aonClick()" src="images/aon_0.png"/>
+                <img id="ahfPhoto" onclick="ahf()" src='images/pomeranian.png'/>                
+            </div>
+            
+            <hr>
+            
+            <p><br>If you think you can help us in any<br>
+            way, feel free to contact us!<br><br></p>
+            
+            <p id="widep">
+                The developers:<br>
+                <span class="goldenText">Noah Adolfsson Hall</span> (artwork, music, plot)<br>
+                <span class="goldenText">Bjorn Sundin</span> (programming, music/sound design, plot)<br>
+                <span class="goldenText">Linnea Tjernstrom</span> (artwork)<br>
+                <span class="goldenText">Niko Fannin</span> (concept art)<br>
+                <span class="goldenText">Ramon Urge</span> (additional help)<br>
+            </p>
+            
+            <center>
+                <p id="mail"><i>pomlandgame@gmail.com</i><br></p>
+            
+                <a href="https://twitter.com/pomlandgame?lang=sv">
+                    <p id="twitter"><i>TWITTER</i></p> 
+                    <img id="twitterIcon" src="images/twitter.png"/> 
+                </a>
+            </center>
+                   
+        </div>
+                
+        <script>
+            var aonCounter = 4;
+            function aonClick() {
+                aonCounter = 0;
+                document.getElementById("sprite1").src = "images/aon_1.png"
+            }
+            function updateAon() {
+                switch (aonCounter) {
+                    case 0:
+                        document.getElementById("sprite1").src = "images/aon_2.png"
+                        aonCounter++;
+                        break;
+                    case 1:
+                        document.getElementById("sprite1").src = "images/aon_1.png"
+                        aonCounter++;
+                        break;
+                    case 2:
+                        document.getElementById("sprite1").src = "images/aon_2.png"
+                        aonCounter++;
+                        break;
+                    case 3:
+                        document.getElementById("sprite1").src = "images/aon_0.png"
+                        aonCounter++;
+                        break;
+                }
+            }
+            setInterval(updateAon, 400);
+
+            var flynnCounter = 4;
+            function flynnClick() {
+                flynnCounter = 0;
+                document.getElementById("sprite0").src = "images/flynn_1.png"
+            }
+            function updateFlynn() {
+                switch (flynnCounter) {
+                    case 0:
+                        document.getElementById("sprite0").src = "images/flynn_2.png"
+                        flynnCounter++;
+                        break;
+                    case 1:
+                        document.getElementById("sprite0").src = "images/flynn_1.png"
+                        flynnCounter++;
+                        break;
+                    case 2:
+                        document.getElementById("sprite0").src = "images/flynn_2.png"
+                        flynnCounter++;
+                        break;
+                    case 3:
+                        document.getElementById("sprite0").src = "images/flynn_0.png"
+                        flynnCounter++;
+                        break;
+                }
+            }
+            setInterval(updateFlynn, 400)
+            function ahf() {
+
+            }
+        </script>
+        
+        <script>
+            
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-77385480-1', 'auto');
+        ga('send', 'pageview');
+
+        </script>
+        
+    </body>    
+    
+</html>

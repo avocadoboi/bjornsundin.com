@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.min.js"></script>
+</head>
+
+<body style="margin:0px; overflow:hidden">
+    <div style="position:absolute; left:50%; top: 15%; transform:translateX(-50%); white-space:nowrap;">
+        <p style="display:inline-block; margin:0px;">Order:</p>
+        <div style="display:inline-block; width:200px; margin-left:-20px; transform:translateY(-3px);">
+            <input id="input_order" class="mdl-slider mdl-js-slider" type="range" step="0.1">
+        </div>
+        <br>
+        <p style="display:inline-block; margin:0px;">Control strength:</p>
+        <div style="display:inline-block; width:200px; margin-left:-20px; transform:translateY(-3px);">
+            <input id="input_controlStrength" class="mdl-slider mdl-js-slider" type="range" step="0.5">
+        </div>
+    </div>
+
+    <script src="../../Vector.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sudoku Solver</title>
+    <meta name="keywords" content="Björn Sundin, programming, music production, game development, coding, games, c++, SFML, Javascript, Sudoku">
+    <meta name="description" content="Solve your sudokus with my sudoku solver!">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../../ui.css" />
+    <style>
+        input[type=number] {
+            position: absolute;
+            text-align: center;
+            font-size: 3.5vmin;
+            border: 0.1vmin solid #ccc;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -moz-appearance: none;
+            -webkit-appearance: none;
+        }
+    </style>
+</head>
+
+<body style="margin: 0; background-color: white;">
+    <div class="div_centered" style="height: 70vmin;">
+        <p style="margin-top: 0; margin-bottom: 3vmin; text-align: center; font-size: 5vmin;">Sudoku Solver</p>
+        <div id="div_inputs" style="position: relative;"></div>
+
+        <p id="text_info" style="text-align: center; margin-top: 3vmin;"></p>
+
+        <div style="display: inline-block; margin-top: 0vmin; position: absolute; left: 50%; transform: translateX(-50%);">
+            <button style="display: inline-block;" id="button_solve">
+                Solve
+            </button>
+            <button style="display: inline-block; " id="button_reset">
+                Reset
+            </button>
+            <button style="display: inline-block;" id="button_clear">
+                Clear
+            </button>
+        </div>
+
+        <br>
+
+        <div style="display: inline-block; margin-top: 0vmin; position: absolute; left: 50%; transform: translateX(-60%);">
+            <input id="checkbox_isRandom" type="checkbox"></input>
+            <p style="display: inline-block;">random</p>
+        </div>
+    </div>
+    <script src="sudokuSolver.js"></script>
+</body>
+
+</html>

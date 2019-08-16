@@ -1,0 +1,120 @@
+<html>
+
+<head>
+    <title>Titel!!</title>
+</head>
+
+<body>
+    <canvas width="800" height="700"></canvas>
+
+    <script>
+        var POINT_RADIUS = 10;
+        var LINE_THICKNESS = 3;
+
+        //-----------------------------------------------------------------------------------------------------
+
+        var canvas = document.getElementsByTagName("canvas")[0];
+        var brush = canvas.getContext("2d");
+
+        //-----------------------------------------------------------------------------------------------------
+
+        var mousePosition = { x: 0, y: 0 };
+        canvas.onmousemove = function (event) {
+            mousePosition.x = event.offsetX;
+            mousePosition.y = event.offsetY;
+        };
+
+        var isMouseDown = false;
+        document.onmousedown = function () {
+            isMouseDown = true;
+        }
+        document.onmouseup = function () {
+            isMouseDown = false;
+        }
+
+        //-----------------------------------------------------------------------------------------------------
+
+        class Point {
+            constructor(x, y) {
+                this.position = { x: x, y: y };
+                this.isDragging = false;
+            }
+
+            draw() {
+                if (isMouseDown && (mousePosition.x - this.position.x) * (mousePosition.x - this.position.x) + (mousePosition.y - this.position.y) * (mousePosition.y - this.position.y) < POINT_RADIUS * POINT_RADIUS) {
+                    this.isDragging = true;
+                }
+                else if (!isMouseDown) {
+                    this.isDragging = false;
+                }
+                if (this.isDragging) {
+                    this.position.x = mousePosition.x, this.position.y = mousePosition.y;
+                }
+
+                brush.fillStyle = "#000";
+                brush.beginPath();
+                brush.arc(this.position.x, this.position.y, POINT_RADIUS, 0, Math.PI * 2);
+                brush.fill();
+            }
+        }
+
+        //-----------------------------------------------------------------------------------------------------
+
+        function getRayLineIntersectionData(x0, y0, x1, y1, x2, y2, x3, y3) {
+            let rayScalar = ((x1 - x2) * (y1 - y0) - (y1 - y2) * (x1 - x0)) / ((x3 - x2) * (y1 - y0) - (y3 - y2) * (x1 - x0));
+            let lineScalar = ((x2 - x0) * (y3 - y2) - (y2 - y0) * (x3 - x2)) / ((x1 - x0) * (y3 - y2) - (y1 - y0) * (x3 - x2));
+            return {
+                intersectionPoint: {
+                    x: x2 + rayScalar * (x3 - x2),
+                    y: y2 + rayScalar * (y3 - y2)
+                },
+                distance: rayScalar,
+                isIntersecting: rayScalar > 0 && lineScalar >= 0 && lineScalar <= 1
+            };
+        }
+
+        var point_0 = new Point(canvas.width * 0.5 - 50, canvas.height * 0.5);
+        var point_1 = new Point(canvas.width * 0.5 + 50, canvas.height * 0.5);
+        var point_2 = new Point(canvas.width * 0.5, canvas.height * 0.5 + 20);
+        var angle = Math.random() * Math.PI * 2;
+        function update() {
+            brush.fillStyle = "#aaa";
+            brush.fillRect(0, 0, canvas.width, canvas.height);
+
+            point_0.draw();
+            point_1.draw();
+            point_2.draw();
+
+            brush.beginPath();
+            brush.moveTo(point_0.position.x, point_0.position.y);
+            brush.lineTo(point_1.position.x, point_1.position.y);
+            brush.stroke();
+
+            let x0 = point_0.position.x, y0 = point_0.position.y,
+                x1 = point_1.position.x, y1 = point_1.position.y,
+                x2 = point_2.position.x, y2 = point_2.position.y,
+                x3 = x2 + Math.cos(angle), y3 = y2 + Math.sin(angle);
+
+            brush.beginPath();
+            brush.moveTo(x2, y2);
+            brush.lineTo((x3 - x2) * 30 + x2, (y3 - y2) * 30 + y2);
+            brush.stroke();
+
+            var intersectionData = getRayLineIntersectionData(x0, y0, x1, y1, x2, y2, x3, y3);
+
+            if (intersectionData.isIntersecting) {
+                brush.fillStyle = "#f4a";
+            }
+            else {
+                brush.fillStyle = "#ddd";
+            }
+            brush.beginPath();
+            brush.arc(intersectionData.intersectionPoint.x, intersectionData.intersectionPoint.y, POINT_RADIUS, 0, Math.PI * 2);
+            brush.fill();
+
+            window.requestAnimationFrame(update);
+        }; update();
+    </script>
+</body>
+
+</html>

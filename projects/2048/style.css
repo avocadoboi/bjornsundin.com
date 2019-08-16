@@ -1,0 +1,19 @@
+body {
+    /* background-color: #f0f0f0; */
+    background-color: #223;
+}
+
+#wrapper {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+#div_gameContainer {
+    /* background-color: #e5e5e5; */
+    background-color: #334;
+    position: relative;
+    width: 500px;
+    height: 500px;
+}

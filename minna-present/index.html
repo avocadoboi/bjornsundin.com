@@ -1,0 +1,104 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=0.7">
+</head>
+
+<body style="overscroll-behavior:contain;">
+    <div id="imagesContainer" style="position:absolute; left:50%; top:50%; transform:translateX(-50%) translateY(-50%);">
+        <img id="bakgrund" src="bakgrund 0.png" draggable="false">
+        <img id="bibeln" src="bibeln.png" draggable="false" style="position:absolute; left:10px; top:10px;">
+    </div>
+
+    <script>
+        const BJORN_BOUND = 250;
+        const BJORN_HAND_BOUND = 100;
+        const BIBLE_BJORN_LEFT_HAND_POSITION = { x: 0, y: 180 };
+        const BIBLE_BJORN_RIGHT_HAND_POSITION = { x: 195, y: 180 };
+
+        const DRAWER_LEFT_BOUND = 290;
+        const DRAWER_RIGHT_BOUND = 505;
+        const BIBLE_DRAWER_POSITION = { x: 480, y: 122 };
+
+        let yay = new Audio("yay.ogg");
+        let background = document.getElementById("bakgrund");
+        let bible = document.getElementById("bibeln");
+        let biblePosition = { x: BIBLE_DRAWER_POSITION.x, y: BIBLE_DRAWER_POSITION.y };
+        let isBibleBeingDragged = false;
+        let isBjornHoldingBible = false;
+
+        function updateBiblePosition() {
+            bible.style.left = biblePosition.x + "px";
+            bible.style.top = biblePosition.y + "px";
+        }
+        updateBiblePosition();
+
+        function handleCursorDown(p_x, p_y) {
+            let rect = bible.getBoundingClientRect();
+            if (p_x > rect.left && p_x < rect.right &&
+                p_y > rect.top && p_y < rect.bottom) {
+                isBibleBeingDragged = true;
+                bible.style.transition = "0s";
+            }
+        }
+        function handleCursorUp(p_x, p_y) {
+            if (isBibleBeingDragged) {
+                let rect = background.getBoundingClientRect();
+                if (p_x - rect.x < BJORN_BOUND) {
+                    if (p_x - rect.x < BJORN_HAND_BOUND) {
+                        biblePosition = { x: BIBLE_BJORN_LEFT_HAND_POSITION.x, y: BIBLE_BJORN_LEFT_HAND_POSITION.y };
+                    }
+                    else {
+                        biblePosition = { x: BIBLE_BJORN_RIGHT_HAND_POSITION.x, y: BIBLE_BJORN_RIGHT_HAND_POSITION.y };
+                    }
+                    if (!isBjornHoldingBible) {
+                        background.src = "bakgrund 1.png";
+                        yay.play();
+                        isBjornHoldingBible = true;
+                    }
+                }
+                else {
+                    biblePosition = { x: Math.max(DRAWER_LEFT_BOUND, Math.min(DRAWER_RIGHT_BOUND, biblePosition.x)), y: BIBLE_DRAWER_POSITION.y };
+                    background.src = "bakgrund 0.png";
+                    isBjornHoldingBible = false;
+                }
+                bible.style.transition = "0.35s cubic-bezier(0.1, 0.9, 0.2, 1)";
+                updateBiblePosition();
+                isBibleBeingDragged = false;
+            }
+        }
+        function handleCursorMove(p_x, p_y) {
+            if (isBibleBeingDragged) {
+                let rect = background.getBoundingClientRect();
+                biblePosition.x = (p_x - rect.left - bible.clientWidth * 0.5);
+                biblePosition.y = (p_y - rect.top - bible.clientHeight * 0.5);
+                updateBiblePosition();
+            }
+        }
+
+        addEventListener("mousedown", (p_event) => {
+            handleCursorDown(p_event.x, p_event.y);
+        });
+        addEventListener("mouseup", (p_event) => {
+            handleCursorUp(p_event.x, p_event.y);
+        });
+        addEventListener("mousemove", (p_event) => {
+            handleCursorMove(p_event.x, p_event.y);
+        });
+
+        addEventListener("touchstart", (p_event) => {
+            handleCursorDown(p_event.touches[0].clientX, p_event.touches[0].clientY);
+            p_event.preventDefault();
+        });
+        addEventListener("touchend", (p_event) => {
+            handleCursorUp(p_event.changedTouches[0].clientX, p_event.changedTouches[0].clientY);
+            p_event.preventDefault();
+        });
+        addEventListener("touchmove", (p_event) => {
+            handleCursorMove(p_event.touches[0].clientX, p_event.touches[0].clientY);
+            p_event.preventDefault();
+        });
+    </script>
+</body>
+
+</html>

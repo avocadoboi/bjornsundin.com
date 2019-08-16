@@ -1,0 +1,98 @@
+/*
+* Global
+*/
+body {
+    margin: 0;
+    overflow: hidden;
+}
+div {
+    white-space: nowrap;
+}
+p {
+    display: inline-block;
+    margin: 0;
+}
+
+#title {
+    display: block;
+    font-size: 7vmin;
+    text-align: center;
+    margin-top: 4vmin;
+}
+
+/*
+* Tab button stuff
+*/
+#div_tabButtons {
+    position: absolute;
+    top: 25vmin;
+    left: 50%;
+    transform: translateX(-50%);
+    user-select: none;
+    box-shadow: 0vmin 0.2vmin 1vmin -0.3vmin black;
+}
+#div_tabButtons > div {
+    display: inline-block;
+    outline: none;
+    padding: 0.7vmin 4vmin;
+    margin: 0;
+    font-size: 5vmin;
+    transition: 0.2s;
+}
+
+/*
+* Tab stuff
+*/
+#div_container {
+    position: absolute;
+    left: 50%;
+    top: 42vmin;
+    transform: translateX(-50%);
+}
+#div_container > div {
+    display: none;
+}
+input {
+    display: inline-block;
+    width: 20vmin;
+    height: 3.5vmin;
+    box-shadow: 0vmin -0.4vmin 0vmin -0.05vmin #005C75 inset;
+}
+
+/*
+* "Test" tab
+*/
+#p_answer {
+    display: block;
+    text-align: center;
+    font-size: 10vmin;
+    margin-top: 5vmin;
+    margin-bottom: 0vmin;
+}
+
+/*
+* "Learn" tab
+*/
+#div_tab_learn > button {
+    display: block;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5vmin;
+    font-size: 5vmin;
+}
+#div_tab_learn > p {
+    display: block;
+    text-align: center;
+    font-size: 5vmin;
+    margin-top: 3vmin;
+}
+
+/*
+* "Watch" tab
+*/
+#div_tab_watch > canvas {
+    width: 60vmin;
+    /*box-shadow: 0vmin 0.2vmin 1vmin -0.3vmin black;*/
+    margin-top: -5vmin;
+}

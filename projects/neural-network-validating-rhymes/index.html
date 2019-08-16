@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <title>Neural network validating rhymes.</title>
+    <link rel="stylesheet" href="../../ui.css">
+    <link rel="stylesheet" href="styling.css">
+</head>
+
+<body>
+    <p id="title">Neural network<br>validating rhymes</p>
+
+    <div id="div_tabButtons"><div>Learn</div><div>Test</div><div>Watch</div></div>
+
+    <div id="div_container">
+        <div id="div_tab_learn">
+            <input></input>
+            <select>
+                <option>rhymes with</option>
+                <option>doesn't rhyme with</option>
+            </select>
+            <input></input>
+            <button>Learn</button>
+            <p></p>
+        </div>
+        <div id="div_tab_test">
+            <p>Does</p>  <input></input>  <p>rhyme with</p>  <input></input><p>?</p>
+            <p id="p_answer">No.</p>
+        </div>
+        <div id="div_tab_watch">
+            <canvas width="800" height="800"></canvas>
+        </div>
+    </div>
+
+    <script src="../../Neuralt.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

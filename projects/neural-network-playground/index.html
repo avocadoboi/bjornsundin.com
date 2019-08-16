@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Neural network playground</title>
+
+    <!-- Material design lite -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href=".css">
+</head>
+
+<body>
+    <div id="wrapper">
+        <h1 style="text-align: center">Neural network playground</h1>
+        <div id="output">
+            <h4>OUTPUT</h4>
+            <canvas class="mdl-shadow--4dp" id="canvas" width="750" height="500"></canvas>
+        </div>
+        <div id="rightPanel">
+            <div id="controls">
+                <h4>CONTROLS</h4>
+                <button class="mdl-button mdl-js-button mdl-button--accent mdl-button--icon mdl-js-ripple-effect" id="button_clear">
+                    <i class="material-icons">clear</i>
+                </button>
+                <span class="mdl-tooltip" for="button_clear">Clear points</span>
+                <button class="mdl-button mdl-js-button mdl-button--accent mdl-button--icon mdl-js-ripple-effect" id="button_playPause">
+                    <i class="material-icons">play_arrow</i>
+                </button>
+                <span class="mdl-tooltip" id="tooltip_playPause" for="button_playPause">Continue learning</span>
+                <button class="mdl-button mdl-js-button mdl-button--accent mdl-button--icon mdl-js-ripple-effect" id="button_reset">
+                    <i class="material-icons">replay</i>
+                </button>
+                <span class="mdl-tooltip" for="button_reset">Reset network</span>
+                <br>
+                <p style="margin-top: 20px; margin-bottom: 5px;">Activation:
+                    <select id="select_activation"></select>
+                </p>
+                <p style="margin-bottom: 5px;">GD optimization:
+                    <select id="select_gradientDescentOptimization"></select>
+                </p>
+                <p style="display: inline-block;">Learning rate:</p>
+                <p style="display: inline-block; width: 200px; margin-bottom: 3px; margin-left: -20px;">
+                    <input class="mdl-slider mdl-js-slider" id="slider_learningRate" type="range" min="0.0005" max="0.15" step="0.0005"></input>
+                </p>
+                <br>
+                <p style="display: inline-block;">Parameter damping:</p>
+                <p style="display: inline-block; width: 200px; margin-bottom: 3px; margin-left: -20px;">
+                    <input class="mdl-slider mdl-js-slider" id="slider_parameterDamping" type="range" min="0.001" max="0.5" step="0.001"></input>
+                </p>
+                <br>
+                <p>Number of hidden neurons:
+                    <input id="input_numberOfHiddenNeurons" style="width: 40px;" type="number" min="1" max="99" step="1"></input>
+                </p>
+            </div>
+            <div id="visualization">
+                <h4>VISUALIZATION</h4>
+                <canvas id="canvas_visualization"></canvas>
+            </div>
+        </div>
+
+        <h5 style="margin-top: 20px; line-height: 28px;">
+            A neural network works by adding functions together. A neuron is simply a function which is added <br>
+            together with other functions to form another function. In the output visualization, the y-axis of the <br>
+            green lines show the output of every "hidden" neuron, and the y-axis on the black line shows the<br>
+            (weighted) sum of those neurons (which is the output of the neural network).
+        </h5>
+    </div>
+
+    <!-- My neural network library! -->
+    <script src="../../Neuralt.js"></script>
+
+    <!-- Main script -->
+    <script src=".js"></script>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+  <script defer="" src="material.min.js"></script>
+
+  <title>Greatest common denominator</title>
+</head>
+
+<body style="background-color: white;">
+  <div style="display:inline-block; position:absolute; left:50%; top:50%; transform:translateX(-50%) translateY(-50%); text-align:center;">
+    <div class="mdl-textfield mdl-js-textfield" style="display:inline-block; width:120px; margin-right:10px;">
+      <input class="mdl-textfield__input" id="input_numerator" style="font-size:30px;">
+      <label class="mdl-textfield__label" for="input_numerator" style="font-size:20px; top:35px;">
+        Numerator
+      </label>
+    </div>
+
+    <div class="mdl-textfield mdl-js-textfield" style="display:inline-block; width:120px;">
+      <input class="mdl-textfield__input" id="input_denominator" style="font-size:30px;">
+      <label class="mdl-textfield__label" for="input_denominator" style="font-size:20px; top:35px;">
+        Denominator
+      </label>
+    </div>
+    
+    <br>
+    
+    <p style="display:inline-block; font-size:25px; line-height:25px; white-space:nowrap; margin-right:10px;">Greatest common denominator:</p>
+    <p id="text_greatestCommonDenominator" style="display:inline-block; font-size:40px;"></p>
+    <br>
+    <p style="display:inline-block; font-size:25px; line-height:25px; white-space:nowrap; margin-right:10px;">Simplified fraction:</p>
+    <p id="text_simplifiedFraction" style="display:inline-block; font-size:40px;"></p>
+  </div>
+  
+  <script src="script.js"></script>
+
+
+</body></html>

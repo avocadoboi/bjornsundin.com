@@ -1,0 +1,8 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "window.zoomLevel": 0,
+    "editor.fontSize": 15,
+    "editor.wordWrap": "on",
+    "editor.formatOnSave": true,
+    "javascript.format.insertSpaceBeforeAndAfterBinaryOperators": true
+}

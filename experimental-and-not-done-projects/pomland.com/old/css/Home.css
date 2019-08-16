@@ -1,0 +1,119 @@
+body{
+    background-color: black;
+    margin: 0;
+}
+
+#Photo0{
+    display: block;
+    position: inherit;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 90px;
+    width: 500px;
+    image-rendering: pixelated;
+}
+
+.Photo1{
+    display: block;
+    position: inherit;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px;
+    width: 250px;
+    image-rendering: pixelated;
+}
+
+@font-face{
+    font-family: pixelfont;
+    src: url(../pixelFont.TTF);
+}
+
+p{
+    display: block;
+    position: inherit;
+    font-family: pixelfont;
+    color: white;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 30px;
+    width: 340px;
+}
+
+#widep{
+    width: 510px;
+}
+
+.goldenText{
+    color: #ecc000;
+}
+
+#mail{
+    font-size: 40px;
+}
+
+hr{
+    width: 500px;
+    height: 3px;
+    background-color: white;
+}
+
+#twitter{
+    color: #1c9ceb;
+    font-size: 40px;
+    margin-left: 450px;
+}
+
+#twitterIcon{
+    position: absolute;
+    margin-left: 40px;
+    top: 1755px; 
+    width: 50px;
+    image-rendering: pixelated;
+}
+
+a{
+    text-decoration: none;
+}
+
+#mainDiv{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1300px;
+}
+
+#spritesDiv{
+    position: absolute;
+    width: 500px;
+    height: 100px;
+    margin-left: 400px;
+    top: 1050px;   
+}
+
+#sprite0{
+    position: absolute;
+    z-index: 1;
+    left: 50px;
+    top: 85px;
+    width: 50px;
+    image-rendering: pixelated;
+}
+
+#sprite1{
+    position: absolute;
+    z-index: 1;
+    left: 390px;
+    top: 85px;
+    width: 45px;
+    image-rendering: pixelated;
+}
+
+#ahfPhoto{
+    position: absolute;
+    z-index: 1;
+    left: 300px;
+    top: -1050px;
+    width: 93px;
+    image-rendering: pixelated;
+    border: none;
+}

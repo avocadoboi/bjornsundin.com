@@ -1,0 +1,458 @@
+<html>
+
+<head>
+    <title>Xeno boi</title>
+    <style>
+        p {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="p5.min.js"></script>
+    <script src="p5.dom.min.js"></script>
+    <script>
+        var circleDiameter = {},
+            circleThiccness = {},
+            circleOutlineRed = {},
+            circleOutlineGreen = {},
+            circleOutlineBlue = {},
+
+            backgroundRed_0 = {},
+            backgroundGreen_0 = {},
+            backgroundBlue_0 = {},
+            backgroundRed_1 = {},
+            backgroundGreen_1 = {},
+            backgroundBlue_1 = {},
+
+            sineAmplitude_0 = {},
+            numberOfSinePoints_0 = {},
+            sineFrequency_0 = {},
+            sineOffset_0 = {},
+            sinePosition_0 = {},
+            sineRotation_0 = {},
+            sineThiccness_0 = {},
+            sineNoiseDetail_0 = {},
+            sineNoiseOffset_0 = {},
+            sineNoiseBlend_0 = {},
+            sineRed_0 = {},
+            sineGreen_0 = {},
+            sineBlue_0 = {},
+
+            sineAmplitude_1 = {},
+            numberOfSinePoints_1 = {},
+            sineFrequency_1 = {},
+            sineOffset_1 = {},
+            sinePosition_1 = {},
+            sineRotation_1 = {},
+            sineThiccness_1 = {},
+            sineNoiseDetail_1 = {},
+            sineNoiseOffset_1 = {},
+            sineNoiseBlend_1 = {},
+            sineRed_1 = {},
+            sineGreen_1 = {},
+            sineBlue_1 = {};
+
+        var sliderData = [
+            {
+                name: "Circle diameter",
+                defaultValue: 1000,
+                min: 100,
+                max: 1425,
+                variable: circleDiameter,
+                isNewCategory: false
+            },
+            {
+                name: "Circle thiccness",
+                defaultValue: 6,
+                min: 0,
+                max: 30,
+                variable: circleThiccness,
+                isNewCategory: false
+            },
+            {
+                name: "Circle outline red",
+                defaultValue: 255,
+                min: 0,
+                max: 255,
+                variable: circleOutlineRed,
+                isNewCategory: false
+            },
+            {
+                name: "Circle outline green",
+                defaultValue: 255,
+                min: 0,
+                max: 255,
+                variable: circleOutlineGreen,
+                isNewCategory: false
+            },
+            {
+                name: "Circle outline blue",
+                defaultValue: 255,
+                min: 0,
+                max: 255,
+                variable: circleOutlineBlue,
+                isNewCategory: false
+            },
+
+            {
+                name: "Background 0 red",
+                defaultValue: 0,
+                min: 0,
+                max: 255,
+                variable: backgroundRed_0,
+                isNewCategory: true
+            },
+            {
+                name: "Background 0 green",
+                defaultValue: 0,
+                min: 0,
+                max: 255,
+                variable: backgroundGreen_0,
+                isNewCategory: false
+            },
+            {
+                name: "Background 0 blue",
+                defaultValue: 0,
+                min: 0,
+                max: 255,
+                variable: backgroundBlue_0,
+                isNewCategory: false
+            },
+
+            {
+                name: "Background 1 red",
+                defaultValue: 0,
+                min: 0,
+                max: 255,
+                variable: backgroundRed_1,
+                isNewCategory: true
+            },
+            {
+                name: "Background 1 green",
+                defaultValue: 0,
+                min: 0,
+                max: 255,
+                variable: backgroundGreen_1,
+                isNewCategory: false
+            },
+            {
+                name: "Background 1 blue",
+                defaultValue: 0,
+                min: 0,
+                max: 255,
+                variable: backgroundBlue_1,
+                isNewCategory: false
+            },
+
+            {
+                name: "Sine 0 amplitude",
+                defaultValue: 220,
+                min: 5,
+                max: 1000,
+                variable: sineAmplitude_0,
+                isNewCategory: true
+            },
+            {
+                name: "Sine 0 number of points",
+                defaultValue: 600,
+                min: 4,
+                max: 600,
+                variable: numberOfSinePoints_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 frequency",
+                defaultValue: 2,
+                min: 0.1,
+                max: 16,
+                variable: sineFrequency_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 offset",
+                defaultValue: 0,
+                min: 0,
+                max: Math.PI * 2,
+                variable: sineOffset_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 position",
+                defaultValue: -240,
+                min: -750,
+                max: 750,
+                variable: sinePosition_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 rotation",
+                defaultValue: 0,
+                min: 0,
+                max: Math.PI * 2,
+                variable: sineRotation_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 thiccness",
+                defaultValue: 3.5,
+                min: 0,
+                max: 15,
+                variable: sineThiccness_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 noise detail",
+                defaultValue: 0.05,
+                min: 0.001,
+                max: 0.5,
+                variable: sineNoiseDetail_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 noise offset",
+                defaultValue: 0,
+                min: 0,
+                max: 50,
+                variable: sineNoiseOffset_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 noise blend",
+                defaultValue: 1,
+                min: 0,
+                max: 1,
+                variable: sineNoiseBlend_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 red",
+                defaultValue: 255,
+                min: 0,
+                max: 255,
+                variable: sineRed_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 green",
+                defaultValue: 140,
+                min: 0,
+                max: 255,
+                variable: sineGreen_0,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 0 blue",
+                defaultValue: 200,
+                min: 0,
+                max: 255,
+                variable: sineBlue_0,
+                isNewCategory: false
+            },
+
+            {
+                name: "Sine 1 amplitude",
+                defaultValue: 220,
+                min: 5,
+                max: 1000,
+                variable: sineAmplitude_1,
+                isNewCategory: true
+            },
+            {
+                name: "Sine 1 number of points",
+                defaultValue: 600,
+                min: 4,
+                max: 600,
+                variable: numberOfSinePoints_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 frequency",
+                defaultValue: 2,
+                min: 0.1,
+                max: 16,
+                variable: sineFrequency_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 offset",
+                defaultValue: 0,
+                min: 0,
+                max: Math.PI * 2,
+                variable: sineOffset_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 position",
+                defaultValue: 240,
+                min: -750,
+                max: 750,
+                variable: sinePosition_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 rotation",
+                defaultValue: 0,
+                min: 0,
+                max: Math.PI * 2,
+                variable: sineRotation_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 thiccness",
+                defaultValue: 3.5,
+                min: 0,
+                max: 15,
+                variable: sineThiccness_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 noise detail",
+                defaultValue: 0.05,
+                min: 0.001,
+                max: 0.5,
+                variable: sineNoiseDetail_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 noise offset",
+                defaultValue: 0,
+                min: 0,
+                max: 50,
+                variable: sineNoiseOffset_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 noise blend",
+                defaultValue: 1,
+                min: 0,
+                max: 1,
+                variable: sineNoiseBlend_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 red",
+                defaultValue: 255,
+                min: 0,
+                max: 255,
+                variable: sineRed_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 green",
+                defaultValue: 140,
+                min: 0,
+                max: 255,
+                variable: sineGreen_1,
+                isNewCategory: false
+            },
+            {
+                name: "Sine 1 blue",
+                defaultValue: 200,
+                min: 0,
+                max: 255,
+                variable: sineBlue_1,
+                isNewCategory: false
+            }
+        ];
+        var sliders = [];
+
+        function getRotated(vector, radians) {
+            return createVector(vector.x * cos(radians) - vector.y * sin(radians), vector.x * sin(radians) + vector.y * cos(radians));
+        }
+
+        function drawSine(
+            amplitude, numberOfPoints, frequency, offset, position, rotation,
+            thiccness, noiseDetail, noiseOffset, noiseBlend, r, g, b
+        ) {
+            stroke(r, g, b);
+            strokeWeight(thiccness);
+            beginShape();
+            var noisePosition = noiseOffset + offset / TWO_PI * noiseDetail * (numberOfPoints + 1) / frequency;
+            for (var a = 0; a <= numberOfPoints + 1; a++) {
+                var vector = createVector(
+                    circleDiameter.value / numberOfPoints * a - circleDiameter.value * 0.5,
+                    sin(offset + TWO_PI * frequency / numberOfPoints * a) * amplitude * (1 - (1 - noise(noisePosition)) * noiseBlend) + position
+                );
+                vector = getRotated(vector, rotation);
+                vertex(width * 0.5 + vector.x, height * 0.5 + vector.y);
+                if (sin(offset + TWO_PI * frequency / numberOfPoints * a) >= 0 &&
+                    sin(offset + TWO_PI * frequency / numberOfPoints * (a - 1)) < 0) {
+                    noisePosition = noiseOffset;
+                }
+                noisePosition += noiseDetail;
+            }
+            endShape();
+        }
+
+        function drawImage() {
+            noiseSeed(0);
+
+            background(backgroundRed_1.value, backgroundGreen_1.value, backgroundBlue_1.value);
+            noFill();
+
+            drawSine(
+                sineAmplitude_0.value,
+                numberOfSinePoints_0.value,
+                sineFrequency_0.value,
+                sineOffset_0.value,
+                sinePosition_0.value,
+                sineRotation_0.value,
+                sineThiccness_0.value,
+                sineNoiseDetail_0.value,
+                sineNoiseOffset_0.value,
+                sineNoiseBlend_0.value,
+                sineRed_0.value, sineGreen_0.value, sineBlue_0.value
+            );
+            drawSine(
+                sineAmplitude_1.value,
+                numberOfSinePoints_1.value,
+                sineFrequency_1.value,
+                sineOffset_1.value,
+                sinePosition_1.value,
+                sineRotation_1.value,
+                sineThiccness_1.value,
+                sineNoiseDetail_1.value,
+                sineNoiseOffset_1.value,
+                sineNoiseBlend_1.value,
+                sineRed_1.value, sineGreen_1.value, sineBlue_1.value
+            );
+
+            stroke(circleOutlineRed.value, circleOutlineGreen.value, circleOutlineBlue.value);
+            strokeWeight(circleThiccness.value);
+            ellipse(width * 0.5, height * 0.5, circleDiameter.value, circleDiameter.value);
+
+            stroke(backgroundRed_0.value, backgroundGreen_0.value, backgroundBlue_0.value);
+            strokeWeight(width * 1.5 - circleDiameter.value);
+            ellipse(width * 0.5, height * 0.5, width * 1.5 + circleThiccness.value, width * 1.5 + circleThiccness.value);
+        }
+
+        function setup() {
+            createCanvas(1425, 1425);
+
+            var currentCategoryIndex = 0;
+            for (let a = 0; a < sliderData.length; a++) {
+                if (sliderData[a].isNewCategory) {
+                    currentCategoryIndex++;
+                }
+
+                var description = createP(sliderData[a].name + ": ");
+                description.style("font-size: 35px;");
+                description.position(width + 40, a * 60 + currentCategoryIndex * 50);
+
+                sliders.push(createSlider(sliderData[a].min, sliderData[a].max, sliderData[a].defaultValue, 0));
+                sliders[a].size(600, 10);
+                sliders[a].input(function () {
+                    sliderData[a].variable.value = sliders[a].value();
+                    drawImage();
+                });
+                sliders[a].position(window.scrollX + description.elt.getBoundingClientRect().right + 10, window.scrollY + description.elt.getBoundingClientRect().top + 17);
+                sliderData[a].variable.value = sliders[a].value();
+            }
+            drawImage();
+        }
+    </script>
+</body>
+
+</html>

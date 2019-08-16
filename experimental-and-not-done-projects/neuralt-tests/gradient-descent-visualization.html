@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            background-color: black;
+        }
+
+        canvas {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            width: 80vmin;
+            image-rendering: pixelated;
+        }
+    </style>
+
+</head>
+
+<body>
+    <canvas id="canvas" width="50" height="50"></canvas>
+
+    <script src="../../Neuralt.js"></script>
+    <script src="../../gpu.js"></script>
+    <script>
+        Array.prototype.getLast = function () {
+            return this[this.length - 1];
+        }
+
+        class Visualizer {
+            constructor() {
+                this.canvas = document.getElementById("canvas");
+                this.brush = this.canvas.getContext("2d");
+
+                this.neuralNetwork = new Neuralt.SupervisedLearningNeuralNetwork(2, [3], 1);
+                this.neuralNetwork.learningExamples.push(
+                    new Neuralt.LearningExample([0, 1], [1]),
+                    new Neuralt.LearningExample([1, 0], [1]),
+                    new Neuralt.LearningExample([0, 0], [0]),
+                    new Neuralt.LearningExample([1, 1], [0])
+                    // new Neuralt.TrainingExample([0.1], [0.2])
+                );
+                this.neuralNetwork.neuronActivation = Neuralt.Activations.Sigmoid;
+                this.neuralNetwork.outputNeuronActivation = Neuralt.Activations.Sigmoid;
+                this.neuralNetwork.learningRate = 0.1;
+                this.neuralNetwork.parameterDamping = 0.001;
+                this.neuralNetwork.learningRateSpecialization = 0.1;
+                this.neuralNetwork.learningRateSpecializationSmoothing = 0;
+
+                this.parameterValues = [Math.random()*2-1, Math.random()*2-1];
+
+                this.scale = 200;
+
+                // this.drawLossSurface = gpu.createKernel(
+                //     function(){
+
+                //     },
+                    
+                // );
+            }
+            update() {
+                this.brush.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                for (let y = 0; y < this.canvas.height; y++) {
+                    this.neuralNetwork.neurons.getLast()[0].parameters[1].value = y / this.canvas.height * this.scale - this.scale * 0.5;
+                    for (let x = 0; x < this.canvas.width; x++) {
+                        this.neuralNetwork.neurons.getLast()[0].parameters[0].value = x / this.canvas.width * this.scale - this.scale * 0.5;
+                        this.brush.fillStyle = "rgba(255, 255, 255, " + this.neuralNetwork.getLoss() + ")";
+                        this.brush.fillRect(x, y, 1, 1);
+                    }
+                }
+
+                this.neuralNetwork.neurons.getLast()[0].parameters[0].value = this.parameterValues[0];
+                this.neuralNetwork.neurons.getLast()[0].parameters[1].value = this.parameterValues[1];
+                this.neuralNetwork.learn();
+                this.parameterValues[0] = this.neuralNetwork.neurons.getLast()[0].parameters[0].value;
+                this.parameterValues[1] = this.neuralNetwork.neurons.getLast()[0].parameters[1].value;
+
+                this.brush.beginPath();
+                this.brush.fillStyle = "rgb(255, 0, 0)";
+                this.brush.fillRect((this.parameterValues[0] + this.scale * 0.5) * this.canvas.width / this.scale, (this.parameterValues[1] + this.scale * 0.5) * this.canvas.height / this.scale, 2, 2);
+            }
+        }
+        var visualizer = new Visualizer();
+
+        function update() {
+            visualizer.update();
+        }
+        setInterval(update, 1000 / 30);
+    </script>
+</body>
+
+</html>

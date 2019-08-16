@@ -1,0 +1,24 @@
+h4 {
+    color: #aaa;
+}
+
+div {
+    display: inline-block;
+}
+
+canvas {
+    margin-bottom: 10px;
+}
+
+#div_wrapper {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+
+    white-space: nowrap;
+}
+
+#canvas_currentBest {
+    margin-right: 20px;
+}
