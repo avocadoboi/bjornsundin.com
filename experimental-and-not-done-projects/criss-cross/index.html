@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            background-color: black;
+        }
+        canvas {
+            width: 100vmin;
+            height: 100vmin;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+    </style>
+</head>
+
+<body>
+    <canvas></canvas>
+
+    <script>
+        const CELL_WIDTH = 40;
+        const NUMBER_OF_COLUMNS = 30;
+        const NUMBER_OF_ROWS = 30;
+
+        //------------------------------
+
+        let canvas = document.getElementsByTagName("canvas")[0];
+        canvas.width = CELL_WIDTH*NUMBER_OF_COLUMNS;
+        canvas.height = CELL_WIDTH*NUMBER_OF_ROWS;
+
+        let context = canvas.getContext("2d");
+        
+        let board = new Array(NUMBER_OF_COLUMNS);
+        for (let x = 0; x < NUMBER_OF_COLUMNS; x++) {
+            board[x] = new Array(NUMBER_OF_ROWS);
+            for (let y = 0; y < NUMBER_OF_ROWS; y++) {
+                board[x][y] = 0;
+            }
+        }
+        
+        let playerCharacters = [ "X", "O" ];
+        let currentPlayer = 0;
+
+        canvas.addEventListener("click", (p_event)=>{
+            let rect = canvas.getBoundingClientRect();
+            board[Math.floor(p_event.offsetX/rect.width*NUMBER_OF_COLUMNS)][Math.floor(p_event.offsetY/rect.height*NUMBER_OF_ROWS)] = currentPlayer + 1;
+            currentPlayer++;
+            if (currentPlayer >= playerCharacters.length) {
+                currentPlayer = 0;
+            }
+            draw();
+        });
+
+        function draw() {
+            context.fillStyle = "black";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            context.strokeStyle = "rgba(255, 255, 255, 0.5)";
+            context.lineWidth = 1;
+            for (let x = 0; x < NUMBER_OF_COLUMNS; x++) {
+                context.beginPath();
+                context.moveTo(x * CELL_WIDTH, 0);
+                context.lineTo(x * CELL_WIDTH, canvas.height);
+                context.stroke();
+            }
+            for (let y = 0; y < NUMBER_OF_ROWS; y++) {
+                context.beginPath();
+                context.moveTo(0, y * CELL_WIDTH);
+                context.lineTo(canvas.width, y * CELL_WIDTH);
+                context.stroke();
+            }
+
+            context.font = "900 " + (CELL_WIDTH/2).toString() + "px Arial";
+            context.textAlign = "center";
+            context.textBaseline = "middle";
+            context.lineWidth = 3;
+            for (let x = 0; x < NUMBER_OF_COLUMNS; x++) {
+                for (let y = 0; y < NUMBER_OF_ROWS; y++) {
+                    if (board[x][y]) {
+                        context.fillStyle = "hsl(" + (360*board[x][y]/playerCharacters.length).toString() + ", 100%, 50%)";
+                        context.fillText(playerCharacters[board[x][y] - 1], (x + 0.5)*CELL_WIDTH, (y + 0.5)*CELL_WIDTH);
+                    }
+                }
+            }
+        }
+        draw();
+
+    </script>
+</body>
+
+</html>
