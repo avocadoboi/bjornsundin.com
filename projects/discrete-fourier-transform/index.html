@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Discrete Fourier Transform</title>
+
+    <!-- Roboto font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container">
+        <h1>The Discrete Fourier Transform</h1>
+        <div id="signalsContainer">
+            <div>
+                <h3>Time domain signal (standard basis)</h3>
+                <canvas id="canvas_timeDomainSignal" width="700" height="300"></canvas>
+                <br>
+                <button id="button_clear">Clear signals</button>
+                <p>Number of samples: </p><input class="numberInput" id="numberInput_numberOfSamples" type="number" value="50">
+                <br>
+                <p id="description">
+                    This is a simple demo of the discrete fourier transform. 
+                    The signal on the left is projected onto a set of orthogonal complex exponential basis vectors, splitting it up into its frequency components.
+                    <br><br>
+                    Drag to edit a signal, and the other will update. Hold shift to set samples to zero.
+                    Only half of the frequencies are shown, because the other half is symmetrical since frequencies over pi appear to move the other direction when sampled like this.
+                    The time domain signal and the frequency phase signals are bipolar (phase is [-pi, pi]) while the frequency amplitude signal is unipolar (it consists of the absolute values of the complex coefficients)
+                </p>
+            </div>
+            <div>
+                <h3>Length/amplitude of complex frequency domain signal (sinusoid basis)</h3>
+                <canvas id="canvas_frequencyDomainAmplitudeSignal" width="700" height="300"></canvas>
+                <h3>Angle/phase of complex frequency domain signal (sinusoid basis)</h3>
+                <canvas id="canvas_frequencyDomainPhaseSignal" width="700" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
