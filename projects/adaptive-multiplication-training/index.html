@@ -1,0 +1,78 @@
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Adaptive multiplication training</title>
+
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<div id="wrapper">
+		<div id="options">
+			<p>Setup</p>
+			<div id="problem-types">
+				<div>
+					<label class="switch">
+						<input id="multiplication-toggle" class="switch-input" type="checkbox" checked>
+						<span class="switch-label">×</span>
+					</label>
+					<div>
+						Min: <input id="min-multiplication" type="number" value="3">
+					</div>
+					<div>
+						Max: <input id="max-multiplication" type="number" value="9">
+					</div>
+				</div>
+				<div>
+					<label class="switch">
+						<input id="division-toggle" class="switch-input" type="checkbox">
+						<span class="switch-label">÷</span>
+					</label>
+					<div>
+						Min: <input id="min-division" type="number" value="3">
+					</div>
+					<div>
+						Max: <input id="max-division" type="number" value="9">
+					</div>
+				</div>
+				<div>
+					<label class="switch">
+						<input id="addition-toggle" class="switch-input" type="checkbox" checked>
+						<span class="switch-label">+</span>
+					</label>
+					<div>
+						Min: <input id="min-addition" type="number" value="3">
+					</div>
+					<div>
+						Max: <input id="max-addition" type="number" value="9">
+					</div>
+				</div>
+				<div>
+					<label class="switch">
+						<input id="subtraction-toggle" class="switch-input" type="checkbox">
+						<span class="switch-label">−</span>
+					</label>
+					<div>
+						Min: <input id="min-subtraction" type="number" value="3">
+					</div>
+					<div>
+						Max: <input id="max-subtraction" type="number" value="9">
+					</div>
+				</div>
+			</div>
+			<button id="start-button">Start</button>
+		</div>
+		<div id="quiz-area">
+			<p id="problem"></p>
+			<input id="answer" type="number">
+			<div id="feedback-container"></div>
+		</div>
+	</div>
+
+	<script src="script.js"></script>
+</body>
+
+</html>
